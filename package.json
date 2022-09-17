@@ -15,7 +15,7 @@
     "copy-files": "copyfiles -u 1 src/**/*.css dist/",
     "build": "rm -rf dist && tsc && yarn copy-files",
     "prepare": "npm run build",
-    "release": "yarn build && yarn pack && gh release create $npm_package_version figure-spike-sorting-views-v$npm_package_version.tgz"
+    "release": "yarn build && yarn pack && gh release create $npm_package_version figurl-spike-sorting-views-v$npm_package_version.tgz"
   },
   "keywords": [],
   "author": "Jeremy Magland",
