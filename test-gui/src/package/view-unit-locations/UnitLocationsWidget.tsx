@@ -1,13 +1,13 @@
 import { useSelectedElectrodes } from '@figurl/timeseries-views'
-import { BaseCanvas } from '@figurl/core-components'
-import { pointInRect, RectangularRegion, rectangularRegionsIntersect, transformPoint, Vec2, Vec4 } from '@figurl/core-components'
+import { BaseCanvas } from '@figurl/core-views'
+import { pointInRect, RectangularRegion, rectangularRegionsIntersect, transformPoint, Vec2, Vec4 } from '@figurl/core-views'
 import { colorForUnitId } from '@figurl/core-utils'
-import { idToNum, useSelectedUnitIds } from '@figurl/spike-sorting-views'
+import { idToNum, useSelectedUnitIds } from '..'
 import { useCallback, useMemo } from 'react'
-import { AffineTransform, applyAffineTransform, applyAffineTransformInv, detAffineTransform } from 'libraries/view-unit-similarity-matrix'
-import { useWheelZoom } from 'libraries/view-unit-similarity-matrix'
+import { AffineTransform, applyAffineTransform, applyAffineTransformInv, detAffineTransform } from '../view-unit-similarity-matrix'
+import { useWheelZoom } from '../view-unit-similarity-matrix'
 import { useDragSelectLayer } from '@figurl/core-utils'
-import { computeElectrodeLocations, defaultColors, ElectrodeColors } from 'libraries/view-average-waveforms'
+import { computeElectrodeLocations, defaultColors, ElectrodeColors } from '../view-average-waveforms'
 
 export const defaultMaxPixelRadius = 25
 const circle = 2 * Math.PI

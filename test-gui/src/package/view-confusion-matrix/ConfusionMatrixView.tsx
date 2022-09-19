@@ -1,6 +1,6 @@
-import { INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '@figurl/spike-sorting-views'
+import { INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '..'
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
-import {MatrixWidget, BottomToolbar} from 'libraries/view-unit-similarity-matrix'
+import {MatrixWidget, BottomToolbar} from '../view-unit-similarity-matrix'
 import { ConfusionMatrixViewData } from './ConfusionMatrixViewData'
 
 type Props = {

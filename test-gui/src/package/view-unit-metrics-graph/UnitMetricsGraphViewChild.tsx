@@ -1,12 +1,12 @@
-import { useUnitMetricSelection } from 'libraries/context-unit-metrics-selection';
-import { PGPlot, PlotGrid } from '@figurl/core-components';
-import { Splitter } from '@figurl/core-components';
-import { idToNum, INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '@figurl/spike-sorting-views';
-import { VerticalScrollView } from '@figurl/core-components';
-import { ToolbarItem, ViewToolbar } from 'libraries/ViewToolbar';
+import { useUnitMetricSelection } from '../context-unit-metrics-selection';
+import { PGPlot, PlotGrid } from '@figurl/core-views';
+import { Splitter } from '@figurl/core-views';
+import { idToNum, INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '..';
+import { VerticalScrollView } from '@figurl/core-views';
+import { ToolbarItem, ViewToolbar } from '../ViewToolbar';
 import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
-import { determinePlotSizeForSquareMatrixGrid } from '@figurl/spike-sorting-views';
+import { determinePlotSizeForSquareMatrixGrid } from '..';
 import UnitMetricPlot, { UnitMetricPlotProps } from './UnitMetricPlot';
 import { UMGMetric, UnitMetricsGraphViewData } from './UnitMetricsGraphViewData';
 

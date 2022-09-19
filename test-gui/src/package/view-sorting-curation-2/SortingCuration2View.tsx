@@ -1,6 +1,6 @@
 import { Checkbox } from "@material-ui/core";
-import { SortingCuration, useSortingCuration } from "@figurl/spike-sorting-views";
-import { useSelectedUnitIds } from "@figurl/spike-sorting-views";
+import { SortingCuration, useSortingCuration } from "..";
+import { useSelectedUnitIds } from "..";
 import { FunctionComponent, useCallback, useMemo } from "react";
 import { SortingCuration2ViewData } from "./SortingCuration2ViewData";
 

@@ -1,5 +1,5 @@
-import { DragAction, dragReducer, DragState } from '@figurl/core-components'
-import { pointSpanToRegion, Vec2 } from "@figurl/core-components"
+import { DragAction, dragReducer, DragState } from '@figurl/core-views'
+import { pointSpanToRegion, Vec2 } from "@figurl/core-views"
 import { Electrode, LayoutMode, PixelSpaceElectrode } from './ElectrodeGeometry'
 import { computeElectrodeLocations, getDraggedElectrodeIds, getElectrodeAtPoint, xMargin as xMarginDefault } from './electrodeGeometryLayout'
 

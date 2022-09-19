@@ -1,9 +1,9 @@
-import { useSortingCuration } from '@figurl/spike-sorting-views';
-import { ColorPatchUnitIdLabel, ColorPatchUnitLabelProps, mergeGroupForUnitId, SortableTableWidget, SortableTableWidgetColumn, SortableTableWidgetRow } from 'libraries/component-sortable-table';
-import { sortIds } from '@figurl/spike-sorting-views';
-import { defaultUnitsTableBottomToolbarOptions, UnitsTableBottomToolbar, UnitsTableBottomToolbarOptions } from 'libraries/ViewToolbar';
+import { useSortingCuration } from '..';
+import { ColorPatchUnitIdLabel, ColorPatchUnitLabelProps, mergeGroupForUnitId, SortableTableWidget, SortableTableWidgetColumn, SortableTableWidgetRow } from '../component-sortable-table';
+import { sortIds } from '..';
+import { defaultUnitsTableBottomToolbarOptions, UnitsTableBottomToolbar, UnitsTableBottomToolbarOptions } from '../ViewToolbar';
 import React, { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
-import { idToNum, INITIALIZE_UNITS, UNIQUE_SELECT_FIRST, UNIQUE_SELECT_LAST, UNIQUE_SELECT_NEXT, UNIQUE_SELECT_PREVIOUS, useSelectedUnitIds } from '@figurl/spike-sorting-views';
+import { idToNum, INITIALIZE_UNITS, UNIQUE_SELECT_FIRST, UNIQUE_SELECT_LAST, UNIQUE_SELECT_NEXT, UNIQUE_SELECT_PREVIOUS, useSelectedUnitIds } from '..';
 import { UnitsTableViewData } from './UnitsTableViewData';
 
 type Props = {

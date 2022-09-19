@@ -1,13 +1,13 @@
-import { AmplitudeScaleToolbarEntries } from 'libraries/AmplitudeScaleToolbarEntries';
+import { AmplitudeScaleToolbarEntries } from '../AmplitudeScaleToolbarEntries';
 import { mean } from 'mathjs';
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
-import { PGPlot, PlotGrid } from '@figurl/core-components';
-import { Splitter } from '@figurl/core-components';
+import { PGPlot, PlotGrid } from '@figurl/core-views';
+import { Splitter } from '@figurl/core-views';
 import { colorForUnitId } from '@figurl/core-utils';
-import { idToNum, INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '@figurl/spike-sorting-views';
-import { VerticalScrollView } from '@figurl/core-components';
-import { defaultUnitsTableBottomToolbarOptions, ToolbarItem, UnitsTableBottomToolbar, UnitsTableBottomToolbarOptions, ViewToolbar } from '../../libraries/ViewToolbar';
+import { idToNum, INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '..';
+import { VerticalScrollView } from '@figurl/core-views';
+import { defaultUnitsTableBottomToolbarOptions, ToolbarItem, UnitsTableBottomToolbar, UnitsTableBottomToolbarOptions, ViewToolbar } from '../ViewToolbar';
 import AverageWaveformPlot, { AverageWaveformPlotProps } from './AverageWaveformPlot';
 import { AverageWaveformsViewData } from './AverageWaveformsViewData';
 

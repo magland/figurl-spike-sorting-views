@@ -1,11 +1,11 @@
-import { BaseCanvas } from '@figurl/core-components'
-import { RectangularRegion, rectangularRegionsIntersect, transformPoint, Vec2, Vec4 } from '@figurl/core-components'
-import { computeElectrodeLocations, defaultColors, ElectrodeColors } from 'libraries/view-average-waveforms'
+import { BaseCanvas } from '@figurl/core-views'
+import { RectangularRegion, rectangularRegionsIntersect, transformPoint, Vec2, Vec4 } from '@figurl/core-views'
+import { computeElectrodeLocations, defaultColors, ElectrodeColors } from '../view-average-waveforms'
 import { useSelectedElectrodes } from '@figurl/timeseries-views'
 import { colorForUnitId } from '@figurl/core-utils'
 import { useDragSelectLayer } from '@figurl/core-utils'
-import { idToNum, useSelectedUnitIds } from '@figurl/spike-sorting-views'
-import { AffineTransform, applyAffineTransform, applyAffineTransformInv, detAffineTransform, useWheelZoom } from 'libraries/view-unit-similarity-matrix'
+import { idToNum, useSelectedUnitIds } from '..'
+import { AffineTransform, applyAffineTransform, applyAffineTransformInv, detAffineTransform, useWheelZoom } from '../view-unit-similarity-matrix'
 import { useCallback, useMemo } from 'react'
 
 export const defaultMaxPixelRadius = 25

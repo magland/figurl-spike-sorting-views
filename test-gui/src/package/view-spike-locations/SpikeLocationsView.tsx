@@ -1,11 +1,11 @@
 import React, { FunctionComponent, useMemo, useState } from 'react'
-import { LockableSelectUnitsWidget } from 'libraries/SelectUnitsWidget'
-import { useLocalSelectedUnitIds } from 'libraries/SelectUnitsWidget'
-import { UnitsTableBottomToolbar, defaultUnitsTableBottomToolbarOptions, UnitsTableBottomToolbarOptions } from 'libraries/ViewToolbar'
+import { LockableSelectUnitsWidget } from '../SelectUnitsWidget'
+import { useLocalSelectedUnitIds } from '../SelectUnitsWidget'
+import { UnitsTableBottomToolbar, defaultUnitsTableBottomToolbarOptions, UnitsTableBottomToolbarOptions } from '../ViewToolbar'
 import { SpikeLocationsViewData } from './SpikeLocationsViewData'
 import SpikeLocationsWidget from './SpikeLocationsWidget'
-import { Splitter } from '@figurl/core-components'
-import { computeElectrodesFromIdsAndLocations } from 'libraries/view-average-waveforms'
+import { Splitter } from '@figurl/core-views'
+import { computeElectrodesFromIdsAndLocations } from '../view-average-waveforms'
 
 type Props = {
     data: SpikeLocationsViewData

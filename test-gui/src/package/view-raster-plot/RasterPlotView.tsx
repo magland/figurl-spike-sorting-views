@@ -1,8 +1,7 @@
 import { useRecordingSelectionTimeInitialization, useTimeRange } from '@figurl/timeseries-views'
-import { useSelectedUnitIds } from '@figurl/spike-sorting-views'
+import { useSelectedUnitIds } from '..'
 import { FunctionComponent, useCallback, useMemo } from 'react'
-import { convert1dDataSeries, use1dScalingMatrix } from 'libraries/util-point-projection'
-import { TimeseriesLayoutOpts } from 'View'
+import { convert1dDataSeries, use1dScalingMatrix } from '../util-point-projection'
 import { colorForUnitId } from '@figurl/core-utils'
 import { TimeScrollView } from '@figurl/timeseries-views'
 import { usePanelDimensions, useTimeseriesMargins } from '@figurl/timeseries-views'
@@ -14,6 +13,12 @@ type Props = {
     timeseriesLayoutOpts?: TimeseriesLayoutOpts
     width: number
     height: number
+}
+
+export type TimeseriesLayoutOpts = {
+    hideToolbar?: boolean
+    hideTimeAxis?: boolean
+    useYAxis?: boolean
 }
 
 type PanelProps = {

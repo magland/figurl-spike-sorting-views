@@ -1,6 +1,6 @@
-import { useUnitMetricSelection } from "libraries/context-unit-metrics-selection";
+import { useUnitMetricSelection } from "../context-unit-metrics-selection";
 import { FunctionComponent, useCallback, useMemo } from "react";
-import { NiceTable } from '@figurl/core-components'
+import { NiceTable } from '@figurl/core-views'
 
 type Props = {
     width: number

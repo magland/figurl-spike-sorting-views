@@ -1,4 +1,4 @@
-import { BaseCanvas } from "@figurl/core-components";
+import { BaseCanvas } from "@figurl/core-views";
 import { FunctionComponent, useCallback, useMemo, useState } from "react";
 import { AffineTransform, applyAffineTransform, applyAffineTransformInv, createAffineTransform, identityAffineTransform, inverseAffineTransform, multAffineTransforms } from "./AffineTransform";
 

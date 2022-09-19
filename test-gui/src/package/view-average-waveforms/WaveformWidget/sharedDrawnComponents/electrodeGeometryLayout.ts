@@ -1,5 +1,5 @@
-import { funcToTransform } from "@figurl/core-components"
-import { getHeight, getWidth, RectangularRegion, TransformationMatrix, transformPoints, Vec2 } from "@figurl/core-components"
+import { funcToTransform } from "@figurl/core-views"
+import { getHeight, getWidth, RectangularRegion, TransformationMatrix, transformPoints, Vec2 } from "@figurl/core-views"
 import { min, norm } from "mathjs"
 import { defaultMaxPixelRadius, Electrode, PixelSpaceElectrode } from './ElectrodeGeometry'
 import { getArrayMax, getArrayMin } from "./utility"

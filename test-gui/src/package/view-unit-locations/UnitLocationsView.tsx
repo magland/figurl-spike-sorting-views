@@ -1,5 +1,5 @@
-import { computeElectrodesFromIdsAndLocations } from 'libraries/view-average-waveforms'
-import { defaultUnitsTableBottomToolbarOptions, UnitsTableBottomToolbar, UnitsTableBottomToolbarOptions } from 'libraries/ViewToolbar'
+import { computeElectrodesFromIdsAndLocations } from '../view-average-waveforms'
+import { defaultUnitsTableBottomToolbarOptions, UnitsTableBottomToolbar, UnitsTableBottomToolbarOptions } from '../ViewToolbar'
 import React, { FunctionComponent, useMemo, useState } from 'react'
 import { UnitLocationsViewData } from './UnitLocationsViewData'
 import UnitLocationsWidget from './UnitLocationsWidget'
