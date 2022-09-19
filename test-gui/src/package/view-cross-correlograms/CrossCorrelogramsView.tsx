@@ -1,6 +1,6 @@
-import { PlotGrid, PGPlot } from '@figurl/core-components';
+import { PlotGrid, PGPlot } from '@figurl/core-views';
 import { idToNum, INITIALIZE_UNITS, sortIds } from '..';
-import {Splitter} from '@figurl/core-components';
+import {Splitter} from '@figurl/core-views';
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import {CorrelogramPlot} from '../view-autocorrelograms';
 import { LockableSelectUnitsWidget } from '../SelectUnitsWidget';
@@ -8,7 +8,7 @@ import { useLocalSelectedUnitIds } from '../SelectUnitsWidget';
 import { CrossCorrelogramData, CrossCorrelogramsViewData } from './CrossCorrelogramsViewData';
 import { colorForUnitId } from '@figurl/core-utils';
 import { ToolbarItem, ViewToolbar } from '../ViewToolbar';
-import { VerticalScrollView } from '@figurl/core-components';
+import { VerticalScrollView } from '@figurl/core-views';
 
 type Props = {
     data: CrossCorrelogramsViewData

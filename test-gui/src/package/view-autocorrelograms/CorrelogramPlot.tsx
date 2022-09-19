@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
-import { BarPlot, BarPlotBar, BarPlotTick } from '@figurl/core-components';
+import { BarPlot, BarPlotBar, BarPlotTick } from '@figurl/core-views';
 
 type Props = {
     binEdgesSec: number[] | undefined,

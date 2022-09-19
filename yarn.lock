@@ -14,11 +14,21 @@
   resolved "https://registry.npmjs.org/@emotion/hash/-/hash-0.8.0.tgz"
   integrity sha512-kBJtf7PH6aWwZ6fka3zQ0p6SBYzx4fl1LoZXE2RrnYST9Xljm7WfKJrU4g/Xr3Beg72MLrp1AWNUmuYJTL7Cow==
 
-"@figurl/core-components@https://github.com/magland/figurl-core-components/releases/download/0.1.4/figurl-core-components-v0.1.4.tgz":
-  version "0.1.4"
-  resolved "https://github.com/magland/figurl-core-components/releases/download/0.1.4/figurl-core-components-v0.1.4.tgz#a4a535ec5ff9da257d1dd01fa202556d9772ef86"
+"@figurl/core-utils@^0.1":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@figurl/core-utils/-/core-utils-0.1.2.tgz#759f3062967cdcaceed2c05e18d79cffa8c4e296"
+  integrity sha512-D8R0KuQlQfeHdKfmlV1Np6T/YBr3K3Wb3LDd69nfAXy9jldSSpwLajPTLNNGwHTDCbcOiiueHYLrZ3zBRENEbA==
   dependencies:
-    "@figurl/core-utils" "https://github.com/magland/figurl-core-utils/releases/download/0.1.1/figurl-core-utils-v0.1.1.tgz"
+    chroma-js "^2.4.2"
+    object-hash "^3.0.0"
+
+"@figurl/core-views@^0.1":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@figurl/core-views/-/core-views-0.1.6.tgz#399f46d9ca411eb79ee00067e19810b821ba86a8"
+  integrity sha512-+QjcUvdU6jXmubpnAaakW8+YuWCrd2r1gXUa2C1PEtXIGIjoclAduEDGbyErUfkvHRe7Xq5VCaDvaBa37GupgA==
+  dependencies:
+    "@figurl/core-utils" "^0.1"
+    "@figurl/interface" "^0.1"
     "@material-ui/core" "^4.12.4"
     "@material-ui/icons" "^4.11.3"
     "@types/node" "^18.7.18"
@@ -32,18 +42,12 @@
     react-visibility-sensor "^5.1.1"
     stream "npm:stream-browserify"
 
-"@figurl/core-utils@https://github.com/magland/figurl-core-utils/releases/download/0.1.1/figurl-core-utils-v0.1.1.tgz":
-  version "0.1.1"
-  resolved "https://github.com/magland/figurl-core-utils/releases/download/0.1.1/figurl-core-utils-v0.1.1.tgz#6c6c41b9d174a3b996cda53f692261fb13fbdb9d"
+"@figurl/interface@^0.1":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@figurl/interface/-/interface-0.1.4.tgz#ec0c3f14eac86f94396b21211586d613f3aed349"
+  integrity sha512-f0wlVdd3BbEB5I1HY9NgsJt8HhA62bGvwmnWUaozmnGc9K7bteFI26DKMIMUEjCMAxx7z7OuyoT4YBOGpygEig==
   dependencies:
-    chroma-js "^2.4.2"
-    object-hash "^3.0.0"
-
-"@figurl/interface@https://github.com/magland/figurl-interface/releases/download/0.1.3/figurl-interface-v0.1.3.tgz":
-  version "0.1.3"
-  resolved "https://github.com/magland/figurl-interface/releases/download/0.1.3/figurl-interface-v0.1.3.tgz#d1b5efd4678ad36483b6746c51a71dcac7823894"
-  dependencies:
-    "@figurl/core-utils" "https://github.com/magland/figurl-core-utils/releases/download/0.1.1/figurl-core-utils-v0.1.1.tgz"
+    "@figurl/core-utils" "^0.1"
     "@types/node" "^18.7.18"
     assert "npm:assert-browserify"
     buffer "npm:buffer-browserify"
