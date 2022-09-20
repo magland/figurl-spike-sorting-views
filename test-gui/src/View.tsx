@@ -1,5 +1,6 @@
 import { FunctionComponent } from 'react';
-import { AutocorrelogramsView, MainLayoutView } from './package';
+import { AutocorrelogramsView } from './package';
+import { MainLayoutView } from '@figurl/core-views'
 import { ViewData } from './ViewData';
 
 type Props = {
