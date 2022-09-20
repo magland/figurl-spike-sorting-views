@@ -20,7 +20,7 @@ export const isAverageWaveformData = (x: any): x is AverageWaveformData => {
 export type AverageWaveformsViewData = {
     type: 'AverageWaveforms'
     averageWaveforms: AverageWaveformData[]
-    samplingFrequency: number
+    samplingFrequency?: number
     noiseLevel?: number
     channelLocations?: {[key: string]: number[]}
     showReferenceProbe?: boolean
@@ -30,9 +30,9 @@ export const isAverageWaveformsViewData = (x: any): x is AverageWaveformsViewDat
     return validateObject(x, {
         type: isEqualTo('AverageWaveforms'),
         averageWaveforms: isArrayOf(isAverageWaveformData),
-        samplingFrequency: isNumber,
+        samplingFrequency: optional(isNumber),
         noiseLevel: optional(isNumber),
         channelLocations: optional(() => (true)),
         showReferenceProbe: optional(isBoolean)
-    }, {allowAdditionalFields: true})
+    }, {allowAdditionalFields: true, callback: a => console.warn(a)})
 }

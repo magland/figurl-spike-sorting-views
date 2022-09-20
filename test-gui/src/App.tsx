@@ -1,5 +1,4 @@
 import { MuiThemeProvider } from '@material-ui/core';
-import { defaultRecordingSelection, RecordingSelectionContext, recordingSelectionReducer } from './package';
 import { defaultUnitSelection, UnitSelectionContext, unitSelectionReducer } from './package';
 import { getFigureData, SetupUrlState, startListeningToParent } from '@figurl/interface';
 import { useWindowDimensions } from '@figurl/core-utils';
@@ -7,14 +6,14 @@ import { useEffect, useMemo, useReducer, useState } from 'react';
 import './localStyles.css';
 import theme from './theme';
 import View from './View';
-import { isViewData, ViewData } from './ViewData';
+import { defaultRecordingSelection, RecordingSelectionContext, recordingSelectionReducer } from '@figurl/timeseries-views';
 // import { SetupAnnotations } from 'libraries/context-annotations';
 
 const urlSearchParams = new URLSearchParams(window.location.search)
 const queryParams = Object.fromEntries(urlSearchParams.entries())
 
 function App() {
-  const [data, setData] = useState<ViewData>()
+  const [data, setData] = useState<any>()
   const [errorMessage, setErrorMessage] = useState<string>()
   const {width, height} = useWindowDimensions()
 
@@ -30,9 +29,8 @@ function App() {
     }
     else {
       getFigureData().then((data: any) => {
-        if (!isViewData(data)) {
-          setErrorMessage(`Invalid figure data`)
-          console.error('Invalid figure data', data)
+        if (!data) {
+          setErrorMessage(`No data returned by getFigureData()`)
           return
         }
         setData(data)

@@ -31,8 +31,10 @@ const panelSpacing = 4
 const RasterPlotView: FunctionComponent<Props> = ({data, timeseriesLayoutOpts, width, height}) => {
     const {selectedUnitIds} = useSelectedUnitIds()
 
+    console.log('--- aaa', data.startTimeSec, data.endTimeSec)
     useRecordingSelectionTimeInitialization(data.startTimeSec, data.endTimeSec)
     const { visibleTimeStartSeconds, visibleTimeEndSeconds } = useTimeRange()
+    console.log('--- bbb', visibleTimeStartSeconds, visibleTimeEndSeconds)
 
     const margins = useTimeseriesMargins(timeseriesLayoutOpts)
 

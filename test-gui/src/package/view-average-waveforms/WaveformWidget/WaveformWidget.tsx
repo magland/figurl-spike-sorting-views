@@ -27,7 +27,7 @@ export type WaveformWidgetProps = {
     colors?: ElectrodeColors
     showLabels?: boolean
     peakAmplitude: number
-    samplingFrequency: number
+    samplingFrequency?: number
     showChannelIds: boolean
     waveformWidth: number
     disableAutoRotate?: boolean

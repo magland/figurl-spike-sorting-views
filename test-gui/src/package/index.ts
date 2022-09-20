@@ -1,6 +1,5 @@
 export * from './view-autocorrelograms'
 export * from './context-unit-selection'
-export * from './context-recording-selection'
 export * from './core-view-component-props'
 export * from './context-sorting-curation'
 export * from './view-cross-correlograms'

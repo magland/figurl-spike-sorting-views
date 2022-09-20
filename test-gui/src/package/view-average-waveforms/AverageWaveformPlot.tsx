@@ -15,7 +15,7 @@ export type AverageWaveformPlotProps = {
     }[]
     layoutMode: 'geom' | 'vertical'
     channelLocations?: {[key: string]: number[]}
-    samplingFrequency: number
+    samplingFrequency?: number
     peakAmplitude: number
     ampScaleFactor: number
     showChannelIds: boolean
