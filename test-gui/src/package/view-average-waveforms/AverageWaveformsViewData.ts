@@ -34,5 +34,5 @@ export const isAverageWaveformsViewData = (x: any): x is AverageWaveformsViewDat
         noiseLevel: optional(isNumber),
         channelLocations: optional(() => (true)),
         showReferenceProbe: optional(isBoolean)
-    }, {allowAdditionalFields: true, callback: a => console.warn(a)})
+    }, {allowAdditionalFields: true})
 }
