@@ -3,6 +3,7 @@ import { SortingCuration, useSortingCuration } from "..";
 import { useSelectedUnitIds } from "..";
 import { FunctionComponent, useCallback, useMemo } from "react";
 import { SortingCuration2ViewData } from "./SortingCuration2ViewData";
+import SaveControl from "./SaveControl";
 
 type Props = {
     data: SortingCuration2ViewData
@@ -14,7 +15,7 @@ const standardLabelChoices = ['accept', 'reject', 'noise', 'artifact', 'mua']
 
 const SortingCuration2View: FunctionComponent<Props> = ({width, height}) => {
     const {sortingCuration, sortingCurationDispatch} = useSortingCuration()
-    const {selectedUnitIds: selectedUnitIdsSet, orderedUnitIds} = useSelectedUnitIds()
+    const {selectedUnitIds: selectedUnitIdsSet, orderedUnitIds, unitIdSelectionDispatch} = useSelectedUnitIds()
     const selectedUnitIds = useMemo(() => (
         orderedUnitIds.filter(x => (selectedUnitIdsSet && selectedUnitIdsSet.has(x))
     )), [selectedUnitIdsSet, orderedUnitIds])
@@ -42,6 +43,25 @@ const SortingCuration2View: FunctionComponent<Props> = ({width, height}) => {
             }
         }
     }, [selectedUnitIds, sortingCurationDispatch])
+
+    const handleMergeSelected = useCallback(() => {
+        if (!sortingCurationDispatch) return
+        sortingCurationDispatch({
+            type: 'MERGE_UNITS',
+            unitIds: selectedUnitIds
+        })
+        unitIdSelectionDispatch({type: "DESELECT_ALL"})
+    }, [sortingCurationDispatch, selectedUnitIds, unitIdSelectionDispatch])
+
+    const handleUnmergeSelected = useCallback(() => {
+        if (!sortingCurationDispatch) return
+        sortingCurationDispatch({
+            type: 'UNMERGE_UNITS',
+            unitIds: selectedUnitIds
+        })
+        unitIdSelectionDispatch({type: "DESELECT_ALL"})
+    }, [sortingCurationDispatch, selectedUnitIds, unitIdSelectionDispatch])
+
     // const {updateUrlState} = useUrlState()
     // const handleSaveSelection = useCallback(() => {
     //     ;(async () => {
@@ -81,12 +101,36 @@ const SortingCuration2View: FunctionComponent<Props> = ({width, height}) => {
                 }
             </div>
             <hr />
+            {
+                (selectedUnitIds.length >= 2 && !unitsAreInMergeGroups(selectedUnitIds, sortingCuration)) &&
+                    <button key="merge" onClick={handleMergeSelected} disabled={sortingCuration?.isClosed}>
+                        Merge selected units: {selectedUnitIds.join(', ')}
+                    </button>
+            }
+            {
+                (selectedUnitIds.length > 0 && unitsAreInMergeGroups(selectedUnitIds, sortingCuration)) &&
+                    <button key="unmerge" onClick={handleUnmergeSelected} disabled={sortingCuration?.isClosed}>
+                        Unmerge units: {selectedUnitIds.join(', ')}
+                    </button>
+            }
+            <hr />
+            <SaveControl />
             {/* hide this button for now */}
             {/* <div>
                 <Button onClick={handleSaveSelection}>Save curation</Button>
             </div> */}
         </div>
     )
+}
+
+const unitsAreInMergeGroups = (unitIds: (number | string)[], sortingCuration: SortingCuration | undefined) => {
+    if (!sortingCuration) return false
+    const mg = sortingCuration.mergeGroups || []
+    const all = mg.reduce((prev, g) => [...prev, ...g], []) // all units in merge groups
+    for (let unitId of unitIds) {
+        if (!all.includes(unitId)) return false
+    }
+    return true
 }
 
 const getLabelCheckboxStates = (labelChoices: string[], sortingCuration: SortingCuration | undefined, selectedUnitIds: (string | number)[], disabled: boolean) => {

@@ -7,6 +7,7 @@ import './localStyles.css';
 import theme from './theme';
 import View from './View';
 import { defaultRecordingSelection, RecordingSelectionContext, recordingSelectionReducer } from '@figurl/timeseries-views';
+import SetupSortingCuration from './package/context-sorting-curation/SetupSortingCuration';
 // import { SetupAnnotations } from 'libraries/context-annotations';
 
 const urlSearchParams = new URLSearchParams(window.location.search)
@@ -69,12 +70,14 @@ function App() {
         <UnitSelectionContext.Provider value={{unitSelection, unitSelectionDispatch}}>
           {/* <SetupAnnotations> */}
             <SetupUrlState>
-              <View
-                data={data}
-                opts={opts}
-                width={width - 10}
-                height={height - 5}
-              />
+              <SetupSortingCuration>
+                <View
+                  data={data}
+                  opts={opts}
+                  width={width - 10}
+                  height={height - 5}
+                />
+              </SetupSortingCuration>
             </SetupUrlState>
           {/* </SetupAnnotations> */}
         </UnitSelectionContext.Provider>
