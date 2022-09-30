@@ -1,5 +1,5 @@
 import { validateObject } from "@figurl/core-utils"
-import { isBoolean, isEqualTo, isNumber, isOneOf, isString, optional } from "@figurl/core-utils"
+import { isBoolean, isEqualTo, isNumber, isOneOf, isString, optional, isArrayOf } from "@figurl/core-utils"
 
 export type UnitLocationsViewData = {
     type: 'UnitLocations'
@@ -16,11 +16,11 @@ export const isUnitLocationsViewData = (x: any): x is UnitLocationsViewData => {
     return validateObject(x, {
         type: isEqualTo('UnitLocations'),
         channelLocations: () => (true),
-        units: y => (validateObject(y, {
+        units: isArrayOf(y => (validateObject(y, {
             unitId: isOneOf([isString, isNumber]),
             x: isNumber,
             y: isNumber
-        })),
+        }))),
         disableAutoRotate: optional(isBoolean)
     })
 }
