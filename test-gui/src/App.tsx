@@ -1,5 +1,5 @@
 import { MuiThemeProvider } from '@material-ui/core';
-import { defaultUnitSelection, UnitSelectionContext, unitSelectionReducer } from './package';
+import { defaultUnitSelection, UnitMetricSelectionContext, unitMetricSelectionReducer, UnitSelectionContext, unitSelectionReducer } from './package';
 import { getFigureData, SetupUrlState, startListeningToParent } from '@figurl/interface';
 import { useWindowDimensions } from '@figurl/core-utils';
 import { useEffect, useMemo, useReducer, useState } from 'react';
@@ -20,6 +20,8 @@ function App() {
 
   const [unitSelection, unitSelectionDispatch] = useReducer(unitSelectionReducer, defaultUnitSelection)
   const [recordingSelection, recordingSelectionDispatch] = useReducer(recordingSelectionReducer, defaultRecordingSelection)
+
+  const [unitMetricSelection, unitMetricSelectionDispatch] = useReducer(unitMetricSelectionReducer, {})
 
   useEffect(() => {
     if (queryParams.test === '1') {
@@ -68,6 +70,7 @@ function App() {
     <MuiThemeProvider theme={theme}>
       <RecordingSelectionContext.Provider value={{recordingSelection, recordingSelectionDispatch}}>
         <UnitSelectionContext.Provider value={{unitSelection, unitSelectionDispatch}}>
+          <UnitMetricSelectionContext.Provider value={{unitMetricSelection, unitMetricSelectionDispatch}}>
           {/* <SetupAnnotations> */}
             <SetupUrlState>
               <SetupSortingCuration>
@@ -80,6 +83,7 @@ function App() {
               </SetupSortingCuration>
             </SetupUrlState>
           {/* </SetupAnnotations> */}
+          </UnitMetricSelectionContext.Provider>
         </UnitSelectionContext.Provider>
       </RecordingSelectionContext.Provider>
     </MuiThemeProvider>

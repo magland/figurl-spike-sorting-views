@@ -23,7 +23,7 @@ export const unitMetricSelectionReducer = (state: UnitMetricSelection, action: U
     else if (action.type === 'initialize') {
         return {
             ...state,
-            allUnitMetrics: action.unitMetrics
+            allUnitMetrics: [...new Set([...(state.allUnitMetrics || []), ...action.unitMetrics])].sort()
         }
     }
     else return state

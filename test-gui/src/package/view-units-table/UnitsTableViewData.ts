@@ -1,5 +1,5 @@
 import { validateObject } from "@figurl/core-utils"
-import { isString, isArrayOf, isEqualTo, isNumber } from "@figurl/core-utils"
+import { isString, isArrayOf, isEqualTo, isNumber, isOneOf } from "@figurl/core-utils"
 
 type UTColumn = {
     key: string
@@ -16,13 +16,13 @@ const isUTColumn = (x: any): x is UTColumn => {
 }
 
 type UTRow = {
-    unitId: number
+    unitId: number | string
     values: {[key: string]: any}
 }
 
 const isUTRow = (x: any): x is UTRow => {
     return validateObject(x, {
-        unitId: isNumber,
+        unitId: isOneOf([isNumber, isString]),
         values: () => (true)
     })
 }
