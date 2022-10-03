@@ -24,7 +24,7 @@ type Props = {
 type PanelProps = {
     pixelZero: number
     units: {
-        unitId: number
+        unitId: number | string
         pixelTimes: number[]
         pixelAmplitudes: number[]
     }[]

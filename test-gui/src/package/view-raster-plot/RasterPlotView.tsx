@@ -7,6 +7,7 @@ import { TimeScrollView } from '@figurl/timeseries-views'
 import { usePanelDimensions, useTimeseriesMargins } from '@figurl/timeseries-views'
 import { DefaultToolbarWidth } from '@figurl/timeseries-views'
 import { RasterPlotViewData } from './RasterPlotViewData'
+import { idToNum } from '../context-unit-selection';
 
 type Props = {
     data: RasterPlotViewData
@@ -59,7 +60,7 @@ const RasterPlotView: FunctionComponent<Props> = ({data, timeseriesLayoutOpts, w
 
     const maxPointsPerUnit = 3000
 
-    const pixelPanels = useMemo(() => (data.plots.sort((p1, p2) => (p1.unitId - p2.unitId)).map(plot => {
+    const pixelPanels = useMemo(() => (data.plots.sort((p1, p2) => (idToNum(p1.unitId) - idToNum(p2.unitId))).map(plot => {
         const filteredSpikes = plot.spikeTimesSec.filter(t => (visibleTimeStartSeconds !== undefined) && (visibleTimeStartSeconds <= t) && (visibleTimeEndSeconds !== undefined) && (t <= visibleTimeEndSeconds))
         const pixelSpikes = subsampleIfNeeded(convert1dDataSeries(filteredSpikes, timeToPixelMatrix), maxPointsPerUnit)
 
@@ -67,7 +68,7 @@ const RasterPlotView: FunctionComponent<Props> = ({data, timeseriesLayoutOpts, w
             key: `${plot.unitId}`,
             label: `${plot.unitId}`,
             props: {
-                color: colorForUnitId(plot.unitId),
+                color: colorForUnitId(idToNum(plot.unitId)),
                 pixelSpikes: pixelSpikes
             },
             paint: paintPanel

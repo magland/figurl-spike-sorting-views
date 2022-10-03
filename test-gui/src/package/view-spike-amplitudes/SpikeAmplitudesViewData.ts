@@ -1,15 +1,15 @@
 import { validateObject } from "@figurl/core-utils"
-import { isArrayOf, isBoolean, isEqualTo, isNumber, optional } from "@figurl/core-utils"
+import { isArrayOf, isBoolean, isEqualTo, isNumber, optional, isOneOf, isString } from "@figurl/core-utils"
 
 type SAUnitData = {
-    unitId: number
+    unitId: number | string
     spikeTimesSec: number[]
     spikeAmplitudes: number[]
 }
 
 const isSAUnitData = (x: any): x is SAUnitData => {
     return validateObject(x, {
-        unitId: isNumber,
+        unitId: isOneOf([isNumber, isString]),
         spikeTimesSec: isArrayOf(isNumber),
         spikeAmplitudes: isArrayOf(isNumber),
     })

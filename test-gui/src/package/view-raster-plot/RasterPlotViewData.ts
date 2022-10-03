@@ -1,15 +1,15 @@
 import { validateObject } from "@figurl/core-utils"
-import { isArrayOf, isEqualTo, isNumber, optional } from "@figurl/core-utils"
+import { isArrayOf, isOneOf, isString, isEqualTo, isNumber, optional } from "@figurl/core-utils"
 import { HighlightIntervalSet, isHighlightIntervalSet } from '@figurl/timeseries-views'
 
 type RPPlotData = {
-    unitId: number
+    unitId: number | string
     spikeTimesSec: number[]
 }
 
 const isRPPlotData = (x: any): x is RPPlotData => {
     return validateObject(x, {
-        unitId: isNumber,
+        unitId: isOneOf([isNumber, isString]),
         spikeTimesSec: isArrayOf(isNumber)
     })
 }

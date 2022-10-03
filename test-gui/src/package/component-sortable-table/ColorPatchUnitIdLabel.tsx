@@ -2,16 +2,17 @@ import { SortingCuration } from '../context-sorting-curation';
 import { colorForUnitId } from '@figurl/core-utils';
 import { FunctionComponent } from "react";
 import './SortableTableWidget.css';
+import { idToNum } from '../context-unit-selection';
 
 
 export interface ColorPatchUnitLabelProps {
-    unitId: number,
+    unitId: number | string,
     mergeGroup?: number[]
 }
 
 const ColorPatchUnitIdLabel: FunctionComponent<ColorPatchUnitLabelProps> = (props: ColorPatchUnitLabelProps) => {
     const { unitId, mergeGroup } = props
-    const colorPatch = colorForUnitId(unitId)
+    const colorPatch = colorForUnitId(idToNum(unitId))
     const mergeGroupString = mergeGroup ? mergeGroup.map((id: number) => `${id}`).join(", ") : ""
     return <span>
         <div className={'unitLabel'} style={{backgroundColor: colorPatch}} />
