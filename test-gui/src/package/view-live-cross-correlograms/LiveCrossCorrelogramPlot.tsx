@@ -6,8 +6,8 @@ type Props = {
     width: number
     height: number
     dataUri: string
-    unitId1: number
-    unitId2: number
+    unitId1: number | string
+    unitId2: number | string
 }
 
 const LiveCrossCorrelogramPlot: FunctionComponent<Props> = ({width, height, dataUri, unitId1, unitId2}) => {

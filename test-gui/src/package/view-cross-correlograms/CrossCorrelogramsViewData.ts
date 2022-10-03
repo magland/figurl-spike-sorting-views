@@ -1,17 +1,17 @@
 import { validateObject } from "@figurl/core-utils"
-import { isArrayOf, isBoolean, isEqualTo, isNumber, optional } from "@figurl/core-utils"
+import { isArrayOf, isBoolean, isEqualTo, isNumber, optional, isOneOf, isString } from "@figurl/core-utils"
 
 export type CrossCorrelogramData = {
-    unitId1: number
-    unitId2: number
+    unitId1: number | string
+    unitId2: number | string
     binEdgesSec: number[]
     binCounts: number[]
 }
 
 export const isCrossCorrelogramData = (x: any): x is CrossCorrelogramData => {
     return validateObject(x, {
-        unitId1: isNumber,
-        unitId2: isNumber,
+        unitId1: isOneOf([isNumber, isString]),
+        unitId2: isOneOf([isNumber, isString]),
         binEdgesSec: isArrayOf(isNumber),
         binCounts: isArrayOf(isNumber)
     },)
