@@ -47,9 +47,9 @@
     stream "npm:stream-browserify"
 
 "@figurl/interface@^0.1":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@figurl/interface/-/interface-0.1.6.tgz#b8a4bd78189f85f0eeb452f6270d60e68aa99190"
-  integrity sha512-id6IisKYNR8lAg3s567y0QKG4RBz9S6nCQjqDWvVm3e8IRMy6DgLKu4W7gyaXwYTYeQrJ9xIaKAKGHuXcEXP7A==
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@figurl/interface/-/interface-0.1.7.tgz#023d74400da67c57e50dfaee6e42a8463cb90193"
+  integrity sha512-prYmPd1NpVJiPeHOQK77aoebVD41g6lYWja+NDObBZJCfW8TOrmvPDqum/WOa4fnFn4o6AGQNl59XxJgFF8oqA==
   dependencies:
     "@figurl/core-utils" "^0.1"
     "@types/node" "^18.7.18"

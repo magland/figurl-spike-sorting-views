@@ -1,4 +1,6 @@
-import { getFileData, storeFileData, useUrlState } from "@figurl/interface";
+import { randomAlphaString } from '@figurl/core-utils';
+import { Hyperlink } from '@figurl/core-views';
+import { getFileData, storeFileData, useSignedIn, useUrlState } from "@figurl/interface";
 import { Button } from "@material-ui/core";
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SortingCuration, useSortingCuration } from "../context-sorting-curation";
@@ -15,6 +17,8 @@ const SaveControl: FunctionComponent<Props> = () => {
 
 	const [saving, setSaving] = useState<boolean>(false)
 
+	const {userId} = useSignedIn()
+
 	const handleSaveSnapshot = useCallback(() => {
 		if (!sortingCuration) return
 		const x = JSONStringifyDeterministic(sortingCuration)
@@ -29,6 +33,23 @@ const SaveControl: FunctionComponent<Props> = () => {
 			}
 		})()
 	}, [updateUrlState, sortingCuration])
+
+	const handleSaveJot = useCallback((o: {new?: boolean}={}) => {
+		if (!sortingCuration) return
+		const uri: string | undefined = urlState.sortingCuration
+		const jotId = uri && uri.startsWith('jot://') && (!o.new) ? uri.split('?')[0].split('/')[2] : randomAlphaString(12)
+		const x = JSONStringifyDeterministic(sortingCuration)
+		setSaving(true)
+		;(async () => {
+			try {
+				await storeFileData(x, {jotId})
+				updateUrlState({sortingCuration: `jot://${jotId}`})
+			}
+			finally {
+				setSaving(false)
+			}
+		})()
+	}, [urlState.sortingCuration, sortingCuration, updateUrlState])
 
     ///////////////////////////////////////////////////////////////
 	const first = useRef<boolean>(true)
@@ -51,12 +72,36 @@ const SaveControl: FunctionComponent<Props> = () => {
 		first.current = false
 	}, [urlState.sortingCuration, first, sortingCurationDispatch])
 
+	const uriStartsWithJot = (urlState.sortingCuration || '').startsWith('jot://')
+	const jotId = uriStartsWithJot ? urlState.sortingCuration.split('?')[0].split('/')[2] : ''
+	const buttonStyle: React.CSSProperties = useMemo(() => ({textTransform: 'none'}), [])
+
 	return (
 		<div>
 			<p>URI: {uri}</p>
-			<div>
-				<Button disabled={saving} onClick={handleSaveSnapshot}>Save as snapshot</Button>
-			</div>
+			{
+				<div>
+					{
+						uriStartsWithJot && (
+							<span>
+								<Button style={buttonStyle} disabled={saving || !userId || (!uriStartsWithJot)} onClick={() => handleSaveJot({new: false})}>Save as {uri}</Button>
+								{userId && <Hyperlink href={`https://jot.figurl.org/jot/${jotId}`} target="_blank">manage</Hyperlink>}
+							</span>
+						)
+					}
+					<br />
+					<Button style={buttonStyle} disabled={saving} onClick={handleSaveSnapshot}>Save as snapshot</Button>
+					<br />
+					<Button style={buttonStyle} disabled={saving || !userId} onClick={() => handleSaveJot({new: true})}>Save as new jot</Button>
+					<br />
+					{
+						saving && 'Saving...'
+					}
+					{
+						!userId && <span style={{fontStyle: 'italic', color: 'gray'}}>You are not signed in</span>
+					}
+				</div>
+			}
 		</div>
 	)
 }
