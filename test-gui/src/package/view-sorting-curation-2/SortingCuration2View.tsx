@@ -4,6 +4,7 @@ import { useSelectedUnitIds } from "..";
 import { FunctionComponent, useCallback, useMemo } from "react";
 import { SortingCuration2ViewData } from "./SortingCuration2ViewData";
 import SaveControl from "./SaveControl";
+import { useUrlState } from "@figurl/interface";
 
 type Props = {
     data: SortingCuration2ViewData
@@ -16,6 +17,11 @@ const standardLabelChoices = ['accept', 'reject', 'noise', 'artifact', 'mua']
 const SortingCuration2View: FunctionComponent<Props> = ({width, height}) => {
     const {sortingCuration, sortingCurationDispatch} = useSortingCuration()
     const {selectedUnitIds: selectedUnitIdsSet, orderedUnitIds, unitIdSelectionDispatch} = useSelectedUnitIds()
+
+    const {urlState, updateUrlState} = useUrlState()
+	const sortingCurationUri = useMemo(() => (urlState['sortingCuration']), [urlState])
+    const setSortingCurationUri = useCallback((uri: string) => {updateUrlState({sortingCuration: uri})}, [updateUrlState])
+
     const selectedUnitIds = useMemo(() => (
         orderedUnitIds.filter(x => (selectedUnitIdsSet && selectedUnitIdsSet.has(x))
     )), [selectedUnitIdsSet, orderedUnitIds])
@@ -71,6 +77,10 @@ const SortingCuration2View: FunctionComponent<Props> = ({width, height}) => {
     //         })
     //     })()
     // }, [sortingCuration, updateUrlState])
+
+    const setSortingCuration = useCallback((x: any) => {
+        sortingCurationDispatch && sortingCurationDispatch({type: 'SET_CURATION', curation: x as any as SortingCuration})
+    }, [sortingCurationDispatch])
     return (
         <div style={{position: 'absolute', width, height, overflowY: 'auto'}}>
             <h3>Curation</h3>
@@ -114,7 +124,12 @@ const SortingCuration2View: FunctionComponent<Props> = ({width, height}) => {
                     </button>
             }
             <hr />
-            <SaveControl />
+            <SaveControl
+                uri={sortingCurationUri}
+                setUri={setSortingCurationUri}
+                object={sortingCuration}
+                setObject={setSortingCuration}
+            />
             {/* hide this button for now */}
             {/* <div>
                 <Button onClick={handleSaveSelection}>Save curation</Button>

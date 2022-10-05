@@ -1,35 +1,43 @@
 import { randomAlphaString } from '@figurl/core-utils';
 import { Hyperlink } from '@figurl/core-views';
-import { getFileData, storeFileData, useSignedIn, useUrlState } from "@figurl/interface";
+import { getFileData, storeFileData, useSignedIn } from "@figurl/interface";
 import { Button } from "@material-ui/core";
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { SortingCuration, useSortingCuration } from "../context-sorting-curation";
 
 type Props ={
+	uri: string | undefined
+	setUri: (uri: string) => void
+	object: {[key: string]: any} | undefined
+	setObject: (object: any) => void
 }
 
-const SaveControl: FunctionComponent<Props> = () => {
-	const {sortingCuration, sortingCurationDispatch} = useSortingCuration()
+type SaveState = {
+	savedObjectJson?: string
+	savedUri?: string
+}
 
-    const {urlState, updateUrlState} = useUrlState()
-
+const SaveControl: FunctionComponent<Props> = ({uri, setUri, object, setObject}) => {
 	const [errorString, setErrorString] = useState<string>('')
-
-	const uri = useMemo(() => (urlState['sortingCuration']), [urlState])
 
 	const [saving, setSaving] = useState<boolean>(false)
 
 	const {userId} = useSignedIn()
 
+	const [saveState, setSaveState] = useState<SaveState>({})
+
 	const handleSaveSnapshot = useCallback(() => {
-		if (!sortingCuration) return
-		const x = JSONStringifyDeterministic(sortingCuration)
+		if (!object) return
+		const x = JSONStringifyDeterministic(object)
 		setSaving(true)
 		setErrorString('')
 		;(async () => {
 			try {
-				const uri = await storeFileData(x)
-				updateUrlState({sortingCuration: uri})
+				const newUri = await storeFileData(x)
+				setUri(newUri)
+				setSaveState({
+					savedObjectJson: x,
+					savedUri: newUri
+				})
 			}
 			catch(err: any) {
 				setErrorString(`Problem saving file data: ${err.message}`)
@@ -38,19 +46,23 @@ const SaveControl: FunctionComponent<Props> = () => {
 				setSaving(false)
 			}
 		})()
-	}, [updateUrlState, sortingCuration])
+	}, [object, setUri])
 
 	const handleSaveJot = useCallback((o: {new?: boolean}={}) => {
-		if (!sortingCuration) return
-		const uri: string | undefined = urlState.sortingCuration
+		if (!object) return
 		const jotId = uri && uri.startsWith('jot://') && (!o.new) ? uri.split('?')[0].split('/')[2] : randomAlphaString(12)
-		const x = JSONStringifyDeterministic(sortingCuration)
+		const x = JSONStringifyDeterministic(object)
 		setSaving(true)
 		setErrorString('')
 		;(async () => {
 			try {
 				await storeFileData(x, {jotId})
-				updateUrlState({sortingCuration: `jot://${jotId}`})
+				const newUri = `jot://${jotId}`
+				setUri(newUri)
+				setSaveState({
+					savedObjectJson: x,
+					savedUri: newUri
+				})
 			}
 			catch(err: any) {
 				setErrorString(`Problem saving file data: ${err.message}`)
@@ -59,32 +71,58 @@ const SaveControl: FunctionComponent<Props> = () => {
 				setSaving(false)
 			}
 		})()
-	}, [urlState.sortingCuration, sortingCuration, updateUrlState])
+	}, [object, setUri, uri])
 
     ///////////////////////////////////////////////////////////////
 	const first = useRef<boolean>(true)
 	useEffect(() => {
 		if (!first.current) return
-		if (!sortingCurationDispatch) return
-		const uri = (urlState.sortingCuration || '') as string
 		if (uri) {
 			getFileData(uri, () => {}).then((x) => {
 				if (!x) {
-					console.warn('Empty curation state')
+					console.warn('Empty state')
 					return
 				}
-				sortingCurationDispatch({type: 'SET_CURATION', curation: x as any as SortingCuration})
+				setObject(x)
+				setSaveState({
+					savedObjectJson: JSONStringifyDeterministic(x),
+					savedUri: uri
+				})
 			}).catch((err: Error) => {
-				console.warn('Problem getting sorting curation state')
+				console.warn('Problem getting state')
 				console.warn(err)
 			})
 		}
 		first.current = false
-	}, [urlState.sortingCuration, first, sortingCurationDispatch])
+	}, [uri, first, setObject])
 
-	const uriStartsWithJot = (urlState.sortingCuration || '').startsWith('jot://')
-	const jotId = uriStartsWithJot ? urlState.sortingCuration.split('?')[0].split('/')[2] : ''
+	const uriStartsWithJot = (uri || '').startsWith('jot://')
+	const jotId = uriStartsWithJot ? (uri || '').split('?')[0].split('/')[2] : ''
 	const buttonStyle: React.CSSProperties = useMemo(() => ({textTransform: 'none'}), [])
+
+	const saveAsJotEnabled = useMemo(() => {
+		if (saving) return false
+		if (!userId) return false
+		if (!uri?.startsWith('jot://')) return false
+		if ((uri === saveState.savedUri) && (JSONStringifyDeterministic(object || {}) === saveState.savedObjectJson)) {
+			return false
+		}
+		return true
+	}, [uri, object, saveState, saving, userId])
+
+	const saveSnapshotEnabled = useMemo(() => {
+		if (saving) return false
+		if (((uri || '').startsWith('sha1://')) && (uri === saveState.savedUri) && (JSONStringifyDeterministic(object || {}) === saveState.savedObjectJson)) {
+			return false
+		}
+		return true
+	}, [uri, object, saveState, saving])
+
+	const saveAsNewJotEnabled = useMemo(() => {
+		if (saving) return false
+		if (!userId) return false
+		return true
+	}, [saving, userId])
 
 	return (
 		<div>
@@ -93,15 +131,15 @@ const SaveControl: FunctionComponent<Props> = () => {
 				{
 					uriStartsWithJot && (
 						<span>
-							<Button style={buttonStyle} disabled={saving || !userId || (!uriStartsWithJot)} onClick={() => handleSaveJot({new: false})}>Save as {uri}</Button>
+							<Button style={buttonStyle} disabled={!saveAsJotEnabled} onClick={() => handleSaveJot({new: false})}>Save as {uri}</Button>
 							{userId && <Hyperlink href={`https://jot.figurl.org/jot/${jotId}`} target="_blank">manage</Hyperlink>}
 						</span>
 					)
 				}
 				<br />
-				<Button style={buttonStyle} disabled={saving} onClick={handleSaveSnapshot}>Save as snapshot</Button>
+				<Button style={buttonStyle} disabled={!saveSnapshotEnabled} onClick={handleSaveSnapshot}>Save as snapshot</Button>
 				<br />
-				<Button style={buttonStyle} disabled={saving || !userId} onClick={() => handleSaveJot({new: true})}>Save as new jot</Button>
+				<Button style={buttonStyle} disabled={!saveAsNewJotEnabled} onClick={() => handleSaveJot({new: true})}>Save as new jot</Button>
 				<br />
 				{
 					saving && 'Saving...'
