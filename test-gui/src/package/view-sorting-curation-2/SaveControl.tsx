@@ -13,6 +13,8 @@ const SaveControl: FunctionComponent<Props> = () => {
 
     const {urlState, updateUrlState} = useUrlState()
 
+	const [errorString, setErrorString] = useState<string>('')
+
 	const uri = useMemo(() => (urlState['sortingCuration']), [urlState])
 
 	const [saving, setSaving] = useState<boolean>(false)
@@ -23,10 +25,14 @@ const SaveControl: FunctionComponent<Props> = () => {
 		if (!sortingCuration) return
 		const x = JSONStringifyDeterministic(sortingCuration)
 		setSaving(true)
+		setErrorString('')
 		;(async () => {
 			try {
 				const uri = await storeFileData(x)
 				updateUrlState({sortingCuration: uri})
+			}
+			catch(err: any) {
+				setErrorString(`Problem saving file data: ${err.message}`)
 			}
 			finally {
 				setSaving(false)
@@ -40,10 +46,14 @@ const SaveControl: FunctionComponent<Props> = () => {
 		const jotId = uri && uri.startsWith('jot://') && (!o.new) ? uri.split('?')[0].split('/')[2] : randomAlphaString(12)
 		const x = JSONStringifyDeterministic(sortingCuration)
 		setSaving(true)
+		setErrorString('')
 		;(async () => {
 			try {
 				await storeFileData(x, {jotId})
 				updateUrlState({sortingCuration: `jot://${jotId}`})
+			}
+			catch(err: any) {
+				setErrorString(`Problem saving file data: ${err.message}`)
 			}
 			finally {
 				setSaving(false)
@@ -79,29 +89,28 @@ const SaveControl: FunctionComponent<Props> = () => {
 	return (
 		<div>
 			<p>URI: {uri}</p>
-			{
-				<div>
-					{
-						uriStartsWithJot && (
-							<span>
-								<Button style={buttonStyle} disabled={saving || !userId || (!uriStartsWithJot)} onClick={() => handleSaveJot({new: false})}>Save as {uri}</Button>
-								{userId && <Hyperlink href={`https://jot.figurl.org/jot/${jotId}`} target="_blank">manage</Hyperlink>}
-							</span>
-						)
-					}
-					<br />
-					<Button style={buttonStyle} disabled={saving} onClick={handleSaveSnapshot}>Save as snapshot</Button>
-					<br />
-					<Button style={buttonStyle} disabled={saving || !userId} onClick={() => handleSaveJot({new: true})}>Save as new jot</Button>
-					<br />
-					{
-						saving && 'Saving...'
-					}
-					{
-						!userId && <span style={{fontStyle: 'italic', color: 'gray'}}>You are not signed in</span>
-					}
-				</div>
-			}
+			<div>
+				{
+					uriStartsWithJot && (
+						<span>
+							<Button style={buttonStyle} disabled={saving || !userId || (!uriStartsWithJot)} onClick={() => handleSaveJot({new: false})}>Save as {uri}</Button>
+							{userId && <Hyperlink href={`https://jot.figurl.org/jot/${jotId}`} target="_blank">manage</Hyperlink>}
+						</span>
+					)
+				}
+				<br />
+				<Button style={buttonStyle} disabled={saving} onClick={handleSaveSnapshot}>Save as snapshot</Button>
+				<br />
+				<Button style={buttonStyle} disabled={saving || !userId} onClick={() => handleSaveJot({new: true})}>Save as new jot</Button>
+				<br />
+				{
+					saving && 'Saving...'
+				}
+				{
+					!userId && <span style={{fontStyle: 'italic', color: 'gray'}}>You are not signed in</span>
+				}
+			</div>
+			{errorString && <div style={{color: 'red'}}>{errorString}</div>}
 		</div>
 	)
 }
