@@ -124,15 +124,32 @@ const SaveControl: FunctionComponent<Props> = ({uri, setUri, object, setObject})
 		return true
 	}, [saving, userId])
 
+	useEffect(() => {
+		const listener = (e: BeforeUnloadEvent) => {
+			if (!saveAsJotEnabled) {
+				return undefined
+			}
+			e.preventDefault()
+			e.returnValue = ''
+		}
+		window.addEventListener("beforeunload", listener)
+		return () => {
+			window.removeEventListener("beforeunload", listener)
+		}
+	}, [saveAsJotEnabled])
+
 	return (
 		<div>
-			<p>URI: {uri}</p>
 			<div>
 				{
 					uriStartsWithJot && (
 						<span>
-							<Button style={buttonStyle} disabled={!saveAsJotEnabled} onClick={() => handleSaveJot({new: false})}>Save as {uri}</Button>
-							{userId && <Hyperlink href={`https://jot.figurl.org/jot/${jotId}`} target="_blank">manage</Hyperlink>}
+							<Button style={{...buttonStyle, color: saveAsJotEnabled ? 'green' : 'gray', fontWeight: 'bold', fontSize: 18}} disabled={!saveAsJotEnabled} title={`Save as ${jotId}`} onClick={() => handleSaveJot({new: false})}>SAVE CURATION</Button>
+							<br />
+							<span style={{paddingLeft: 9}}>
+								{userId && <Hyperlink href={`https://jot.figurl.org/jot/${jotId}`} target="_blank">manage access</Hyperlink>}
+							</span>
+							<div>&nbsp;</div>
 						</span>
 					)
 				}
@@ -147,6 +164,7 @@ const SaveControl: FunctionComponent<Props> = ({uri, setUri, object, setObject})
 				{
 					!userId && <span style={{fontStyle: 'italic', color: 'gray'}}>You are not signed in</span>
 				}
+				<p>URI: {uri}</p>
 			</div>
 			{errorString && <div style={{color: 'red'}}>{errorString}</div>}
 		</div>
