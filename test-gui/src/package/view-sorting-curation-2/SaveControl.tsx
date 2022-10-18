@@ -138,11 +138,17 @@ const SaveControl: FunctionComponent<Props> = ({uri, setUri, object, setObject})
 		}
 	}, [saveAsJotEnabled])
 
+	const handleExportAsJson = useCallback(() => {
+		if (!object) return
+		const x = JSONStringifyDeterministic(object)
+		downloadTextFile('sorting-curation.json', x)
+	}, [object])
+
 	return (
 		<div>
 			<div>
 				{
-					uriStartsWithJot && (
+					uriStartsWithJot ? (
 						<span>
 							<Button style={{...buttonStyle, color: saveAsJotEnabled ? 'green' : 'gray', fontWeight: 'bold', fontSize: 18}} disabled={!saveAsJotEnabled} title={`Save as ${jotId}`} onClick={() => handleSaveJot({new: false})}>SAVE CURATION</Button>
 							<br />
@@ -151,12 +157,18 @@ const SaveControl: FunctionComponent<Props> = ({uri, setUri, object, setObject})
 							</span>
 							<div>&nbsp;</div>
 						</span>
+					) : (
+						<span>
+							<Button style={{...buttonStyle, color: saveAsNewJotEnabled ? 'green' : 'gray', fontWeight: 'bold', fontSize: 18}} disabled={!saveAsNewJotEnabled} title={`Save as new rewritable`} onClick={() => handleSaveJot({new: true})}>SAVE AS REWRITABLE</Button>
+						</span>
 					)
 				}
 				<br />
 				<Button style={buttonStyle} disabled={!saveSnapshotEnabled} onClick={handleSaveSnapshot}>Save as snapshot</Button>
 				<br />
-				<Button style={buttonStyle} disabled={!saveAsNewJotEnabled} onClick={() => handleSaveJot({new: true})}>Save as new jot</Button>
+				{
+					!uriStartsWithJot && <Button style={buttonStyle} disabled={!saveAsNewJotEnabled} onClick={() => handleSaveJot({new: true})}>Save as new jot</Button>
+				}
 				<br />
 				{
 					saving && 'Saving...'
@@ -165,6 +177,7 @@ const SaveControl: FunctionComponent<Props> = ({uri, setUri, object, setObject})
 					!userId && <span style={{fontStyle: 'italic', color: 'gray'}}>You are not signed in</span>
 				}
 				<p>URI: {uri}</p>
+				<Button onClick={handleExportAsJson}>Export as JSON</Button>
 			</div>
 			{errorString && <div style={{color: 'red'}}>{errorString}</div>}
 		</div>
@@ -177,6 +190,20 @@ export const JSONStringifyDeterministic = ( obj: Object, space: string | number 
     JSON.stringify( obj, function( key, value ){ allKeys.push( key ); return value; } )
     allKeys.sort();
     return JSON.stringify( obj, allKeys, space );
+}
+
+// Thanks: https://stackoverflow.com/questions/3665115/how-to-create-a-file-in-memory-for-user-to-download-but-not-through-server
+function downloadTextFile(filename: string, text: string) {
+	var element = document.createElement('a');
+	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+	element.setAttribute('download', filename);
+  
+	element.style.display = 'none';
+	document.body.appendChild(element);
+  
+	element.click();
+  
+	document.body.removeChild(element);
 }
 
 export default SaveControl

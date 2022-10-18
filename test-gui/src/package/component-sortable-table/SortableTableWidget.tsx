@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableContainer } from '@material-ui/core';
+import { FunctionComponent, useCallback, useMemo } from 'react';
 import { allUnitSelectionState, voidClickHandler } from '..';
-import { FunctionComponent, useCallback, useEffect, useMemo } from 'react';
 import './SortableTableWidget.css';
 import SortableTableWidgetContentRow from './SortableTableWidgetContentRow';
 import SortableTableWidgetHeaderRow, { sorterCallbackWrapper } from './SortableTableWidgetHeader';
@@ -12,9 +12,9 @@ const SortableTableWidget: FunctionComponent<SortableTableProps> = (props) => {
     const allUnitSelectionStatus = useMemo(() => allUnitSelectionState({selectedUnitIds, orderedUnitIds, visibleUnitIds: _visibleUnitIds}), [selectedUnitIds, orderedUnitIds, _visibleUnitIds])
     const rowSorter = useCallback((colsDict: ColsDict) => sorterCallbackWrapper(rows, colsDict), [rows])
 
-    useEffect(() => {
-        if (_visibleUnitIds.some(id => !rows.has(id))) throw Error('Rows missing from row dict')
-    }, [rows, _visibleUnitIds])
+    // useEffect(() => {
+    //     if (_visibleUnitIds.some(id => !rows.has(id))) throw Error('Rows missing from row dict (1)')
+    // }, [rows, _visibleUnitIds])
 
     const header = useMemo(() => {
         return (<SortableTableWidgetHeaderRow
@@ -47,8 +47,8 @@ const SortableTableWidget: FunctionComponent<SortableTableProps> = (props) => {
     // even though it should make no difference. It's probably all in my head, but I'm leaving it.
     const visibleRows = useMemo(() => {
         if (!rows) return []
-        const realizedRows = _visibleUnitIds.map(id => rows.get(id))
-        if (realizedRows.some(r => r === undefined)) throw Error('Rows missing from row dict')
+        const realizedRows = _visibleUnitIds.map(id => rows.get(id)).filter(r => (r !== undefined))
+        if (realizedRows.some(r => r === undefined)) throw Error('Rows missing from row dict (2)')
         return realizedRows as any as SortableTableWidgetRow[]
     }, [_visibleUnitIds, rows])
 
