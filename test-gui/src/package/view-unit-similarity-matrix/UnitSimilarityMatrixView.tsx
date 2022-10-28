@@ -27,11 +27,14 @@ const UnitSimilarityMatrixView: FunctionComponent<Props> = ({ data, width, heigh
     }, [data.unitIds, unitIdSelectionDispatch])
 
     const unitIdsFilt = useMemo(() => (data.unitIds.filter(u => (!visibleUnitIds || visibleUnitIds.includes(u)))), [data.unitIds, visibleUnitIds])
-    const matrix = useMemo(() => {
+    const indsForIds = useMemo(() => {
         const indsForIds: { [k: number | string]: number } = {}
         unitIdsFilt.forEach((id, i) => {
             indsForIds[id] = i
         })
+        return indsForIds
+    }, [unitIdsFilt])
+    const matrix = useMemo(() => {
         const m: number[][] = []
         unitIdsFilt.forEach(() => { // avoid unused variables
             const a: number[] = []
@@ -47,7 +50,7 @@ const UnitSimilarityMatrixView: FunctionComponent<Props> = ({ data, width, heigh
             m[ind1][ind2] = x.similarity
         }
         return m
-    }, [unitIdsFilt, data.similarityScores])
+    }, [indsForIds, unitIdsFilt, data.similarityScores])
 
     const handleSetSelectedUnitIds = useCallback((x: (number | string)[]) => {
         unitIdSelectionDispatch({
@@ -56,23 +59,46 @@ const UnitSimilarityMatrixView: FunctionComponent<Props> = ({ data, width, heigh
         })
     }, [unitIdSelectionDispatch])
 
-    const bottomToolbarHeight = 30
+    const handleSelectSimilarUnits = useCallback(() => {
+        const id0 = [...selectedUnitIds][0]
+        if (!id0) return
+        const i0 = indsForIds[id0]
+        const candidates: {id: number | string, similarity: number}[] = []
+        for (let j = 0; j < unitIdsFilt.length; j++) {
+            if (j !== i0) {
+                const v = matrix[i0][j]
+                if (!isNaN(v)) {
+                    candidates.push({id: unitIdsFilt[j], similarity: v})
+                }
+            }
+        }
+        candidates.sort((a, b) => (b.similarity - a.similarity))
+        const newSelectedIds = [id0, ...candidates.slice(0, 4).map(x => (x.id))]
+        unitIdSelectionDispatch({type: 'SET_SELECTION', incomingSelectedUnitIds: newSelectedIds})
+    }, [indsForIds, selectedUnitIds, matrix, unitIdSelectionDispatch, unitIdsFilt])
+
+    const bottomToolbarHeight = 20
     return (
         <div>
-            <MatrixWidget
-                unitIds1={unitIdsFilt}
-                unitIds2={unitIdsFilt}
-                selectedUnitIds={selectedUnitIds}
-                onSetSelectedUnitIds={handleSetSelectedUnitIds}
-                matrix={matrix}
-                range={data.range || defaultRange}
-                setHoveredInfo={setHoveredInfo}
-                width={width}
-                height={height - bottomToolbarHeight}
-            />
-            <BottomToolbar
-                hoveredInfo={hoveredInfo}
-            />
+            <div style={{position: 'absolute', height: height - bottomToolbarHeight, width}}>
+                <MatrixWidget
+                    unitIds1={unitIdsFilt}
+                    unitIds2={unitIdsFilt}
+                    selectedUnitIds={selectedUnitIds}
+                    onSetSelectedUnitIds={handleSetSelectedUnitIds}
+                    matrix={matrix}
+                    range={data.range || defaultRange}
+                    setHoveredInfo={setHoveredInfo}
+                    width={width}
+                    height={height - bottomToolbarHeight}
+                />
+            </div>
+            <div style={{position: 'absolute', top: height - bottomToolbarHeight, height: bottomToolbarHeight, width}}>
+                <BottomToolbar
+                    hoveredInfo={hoveredInfo}
+                    onSelectSimilarUnits={selectedUnitIds.size === 1 ? handleSelectSimilarUnits : undefined}
+                />
+            </div>
         </div>
     )
 }
