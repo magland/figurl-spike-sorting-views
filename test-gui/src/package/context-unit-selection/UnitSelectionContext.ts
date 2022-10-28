@@ -71,7 +71,7 @@ export const unitSelectionReducer = (s: UnitSelection, a: UnitSelectionAction): 
     switch (type) { 
         case INITIALIZE_UNITS:
             if (s.orderedUnitIds.length > 0) return s
-            if (a.newUnitOrder && a.newUnitOrder.length > 1) {
+            if (a.newUnitOrder && a.newUnitOrder.length >= 1) {
                 return {
                     ...s,
                     // selectedUnitIds: new Set<number | string>(), // don't initialze here, to support case of selection initialized via state
