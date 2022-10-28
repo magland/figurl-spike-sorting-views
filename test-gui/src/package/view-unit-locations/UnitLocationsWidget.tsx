@@ -194,10 +194,13 @@ const UnitLocationsWidget = (props: WidgetProps) => {
 
     const handleSelectRect = useCallback((r: Vec4, {ctrlKey}: {ctrlKey: boolean}) => {
         const r2 = applyAffineTransformToRectInv(affineTransform, r)
+        const det = detAffineTransform(affineTransform)
+        const radius2 = markerRadius / Math.sqrt(det)
         const ids: (number | string)[] = []
         for (let unit of filteredUnits) {
             const pt = transformPoint(transform, [unit.x, unit.y])
-            if (rectangularRegionsIntersect(rectangularRegion([pt[0] - markerRadius, pt[1] - markerRadius, markerRadius * 2, markerRadius * 2]), rectangularRegion(r2))) {
+            if (rectangularRegionsIntersect(rectangularRegion([pt[0] - radius2, pt[1] - radius2, radius2 * 2, radius2 * 2]), rectangularRegion(r2))) {
+                rectangularRegion([pt[0] - radius2, pt[1] - radius2, radius2 * 2, radius2 * 2])
                 ids.push(unit.unitId)
             }
         }

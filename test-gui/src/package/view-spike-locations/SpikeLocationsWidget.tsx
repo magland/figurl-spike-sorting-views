@@ -210,11 +210,13 @@ const SpikeLocationsWidget = (props: WidgetProps) => {
 
     const handleSelectRect = useCallback((r: Vec4, {ctrlKey}: {ctrlKey: boolean}) => {
         const r2 = applyAffineTransformToRectInv(affineTransform, r)
+        const det = detAffineTransform(affineTransform)
+        const radius2 = markerRadius / Math.sqrt(det)
         const ids: (string | number)[] = []
         for (let unit of filteredUnits) {
             const pts = pixelPointsByUnit[unit.unitId]
             for (let pt of pts) {
-                if (rectangularRegionsIntersect(rectangularRegion([pt.x - markerRadius, pt.y - markerRadius, markerRadius * 2, markerRadius * 2]), rectangularRegion(r2))) {
+                if (rectangularRegionsIntersect(rectangularRegion([pt.x - radius2, pt.y - radius2, radius2 * 2, radius2 * 2]), rectangularRegion(r2))) {
                     ids.push(unit.unitId)
                     break
                 }
