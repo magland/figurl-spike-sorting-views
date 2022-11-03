@@ -82,7 +82,7 @@ const SortingCuration2View: FunctionComponent<Props> = ({width, height}) => {
         sortingCurationDispatch && sortingCurationDispatch({type: 'SET_CURATION', curation: x as any as SortingCuration})
     }, [sortingCurationDispatch])
     return (
-        <div style={{position: 'absolute', width, height, overflowY: 'auto'}}>
+        <div style={{position: 'absolute', width: width - 10, height, overflowY: 'auto', paddingLeft: 10}}>
             <h3>Curation</h3>
             <div>
                 Selected units:&nbsp;{getAbbreviatedUnitIdsString(selectedUnitIds, 25)}

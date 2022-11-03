@@ -1,8 +1,9 @@
 import { randomAlphaString } from '@figurl/core-utils';
 import { Hyperlink } from '@figurl/core-views';
-import { getFileData, storeFileData, useSignedIn } from "@figurl/interface";
+import { getFileData, storeFileData, storeGithubFileData, useSignedIn } from "@figurl/interface";
 import { Button } from "@material-ui/core";
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import EditGithubUriControl from './EditGithubUriControl';
 
 type Props ={
 	uri: string | undefined
@@ -73,6 +74,52 @@ const SaveControl: FunctionComponent<Props> = ({uri, setUri, object, setObject})
 		})()
 	}, [object, setUri, uri])
 
+	const handleSaveGithub = useCallback(() => {
+		if (!object) return
+		if (!uri) return
+		const x = JSONStringifyDeterministic(object)
+		setSaving(true)
+		setErrorString('')
+		;(async () => {
+			try {
+				await storeGithubFileData({fileData: x, uri})
+				setSaveState({
+					savedObjectJson: x,
+					savedUri: uri
+				})
+			}
+			catch(err: any) {
+				setErrorString(`Problem saving file data to Github: ${err.message}`)
+			}
+			finally {
+				setSaving(false)
+			}
+		})()
+	}, [object, uri])
+
+	const handleSaveGithubAs = useCallback((newUri: string) => {
+		if (!object) return
+		const x = JSONStringifyDeterministic(object)
+		setSaving(true)
+		setErrorString('')
+		;(async () => {
+			try {
+				await storeGithubFileData({fileData: x, uri: newUri})
+				setSaveState({
+					savedObjectJson: x,
+					savedUri: newUri
+				})
+				setUri(newUri)
+			}
+			catch(err: any) {
+				setErrorString(`Problem saving file data to Github: ${err.message}`)
+			}
+			finally {
+				setSaving(false)
+			}
+		})()
+	}, [object, setUri])
+
     ///////////////////////////////////////////////////////////////
 	const first = useRef<boolean>(true)
 	useEffect(() => {
@@ -97,18 +144,24 @@ const SaveControl: FunctionComponent<Props> = ({uri, setUri, object, setObject})
 	}, [uri, first, setObject])
 
 	const uriStartsWithJot = (uri || '').startsWith('jot://')
+	const uriStartsWithGithub = (uri || '').startsWith('github://')
 	const jotId = uriStartsWithJot ? (uri || '').split('?')[0].split('/')[2] : ''
 	const buttonStyle: React.CSSProperties = useMemo(() => ({textTransform: 'none'}), [])
+
+	const dirty = useMemo(() => {
+		if ((uri === saveState.savedUri) && (JSONStringifyDeterministic(object || {}) === saveState.savedObjectJson)) {
+			return false
+		}
+		return true
+	}, [object, saveState, uri])
 
 	const saveAsJotEnabled = useMemo(() => {
 		if (saving) return false
 		if (!userId) return false
 		if (!uri?.startsWith('jot://')) return false
-		if ((uri === saveState.savedUri) && (JSONStringifyDeterministic(object || {}) === saveState.savedObjectJson)) {
-			return false
-		}
+		if (!dirty) return false
 		return true
-	}, [uri, object, saveState, saving, userId])
+	}, [uri, saving, userId, dirty])
 
 	const saveSnapshotEnabled = useMemo(() => {
 		if (saving) return false
@@ -144,40 +197,74 @@ const SaveControl: FunctionComponent<Props> = ({uri, setUri, object, setObject})
 		downloadTextFile('sorting-curation.json', x)
 	}, [object])
 
+	const [editingGithubUri, setEditingGithubUri] = useState(false)
+
 	return (
 		<div>
 			<div>
 				{
-					uriStartsWithJot ? (
+					uriStartsWithJot && (
 						<span>
-							<Button style={{...buttonStyle, color: saveAsJotEnabled ? 'green' : 'gray', fontWeight: 'bold', fontSize: 18}} disabled={!saveAsJotEnabled} title={`Save as ${jotId}`} onClick={() => handleSaveJot({new: false})}>SAVE CURATION</Button>
+							<Button style={{...buttonStyle, color: saveAsJotEnabled ? 'green' : 'gray'}} disabled={!saveAsJotEnabled} title={`Save as ${jotId}`} onClick={() => handleSaveJot({new: false})}>SAVE JOT</Button>
 							<br />
 							<span style={{paddingLeft: 9}}>
-								{userId && <Hyperlink href={`https://jot.figurl.org/jot/${jotId}`} target="_blank">manage access</Hyperlink>}
+								{
+									userId && (
+										<span>
+											<Hyperlink href={`https://jot.figurl.org/jot/${jotId}`} target="_blank"><span style={{fontSize: 12}}>manage jot access</span></Hyperlink>
+											<br />
+										</span>
+									)
+								}
 							</span>
-							<div>&nbsp;</div>
-						</span>
-					) : (
-						<span>
-							<Button style={{...buttonStyle, color: saveAsNewJotEnabled ? 'green' : 'gray', fontWeight: 'bold', fontSize: 18}} disabled={!saveAsNewJotEnabled} title={`Save as new rewritable`} onClick={() => handleSaveJot({new: true})}>SAVE AS REWRITABLE</Button>
 						</span>
 					)
 				}
-				<br />
-				<Button style={buttonStyle} disabled={!saveSnapshotEnabled} onClick={handleSaveSnapshot}>Save as snapshot</Button>
+				{
+					uriStartsWithGithub && (
+						<span>
+							<Button disabled={!dirty} style={buttonStyle} onClick={() => handleSaveGithub()}>Save to Github</Button>
+							<br />
+						</span>
+					)
+				}
+				<Button style={buttonStyle} disabled={!saveSnapshotEnabled} onClick={handleSaveSnapshot}>Save as snapshot (sha1://)</Button>
 				<br />
 				{
-					!uriStartsWithJot && <Button style={buttonStyle} disabled={!saveAsNewJotEnabled} onClick={() => handleSaveJot({new: true})}>Save as new jot</Button>
+					!uriStartsWithJot && (
+						<span>
+							<Button style={buttonStyle} disabled={!saveAsNewJotEnabled} onClick={() => handleSaveJot({new: true})}>Save as new jot (jot://)</Button>
+							<br />
+						</span>
+					)
 				}
-				<br />
+				{
+					!uriStartsWithGithub && (
+						!editingGithubUri ? (
+							<span>
+								<Button style={buttonStyle} onClick={() => setEditingGithubUri(true)}>Save to Github as...</Button>
+								<br />
+							</span>
+						) : (
+							<EditGithubUriControl onSubmit={uri => {handleSaveGithubAs(uri)}} onCancel={() => setEditingGithubUri(false)} />
+						)
+					)
+				}
+				<span>
+					<Button style={buttonStyle} onClick={handleExportAsJson}>Export as JSON</Button>
+					<br />
+				</span>
 				{
 					saving && 'Saving...'
 				}
 				{
 					!userId && <span style={{fontStyle: 'italic', color: 'gray'}}>You are not signed in</span>
 				}
-				<p>URI: {uri}</p>
-				<Button onClick={handleExportAsJson}>Export as JSON</Button>
+
+				<div style={{paddingLeft: 8, fontSize: 12}}>
+					URI: {uri}
+				</div>
+				
 			</div>
 			{errorString && <div style={{color: 'red'}}>{errorString}</div>}
 		</div>
