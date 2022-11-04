@@ -144,7 +144,7 @@ const SaveControl: FunctionComponent<Props> = ({uri, setUri, object, setObject})
 	}, [uri, first, setObject])
 
 	const uriStartsWithJot = (uri || '').startsWith('jot://')
-	const uriStartsWithGithub = (uri || '').startsWith('github://')
+	const uriStartsWithGithub = (uri || '').startsWith('gh://')
 	const jotId = uriStartsWithJot ? (uri || '').split('?')[0].split('/')[2] : ''
 	const buttonStyle: React.CSSProperties = useMemo(() => ({textTransform: 'none'}), [])
 

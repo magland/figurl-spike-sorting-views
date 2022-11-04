@@ -12,13 +12,13 @@ const EditGithubUriControl: FunctionComponent<Props> = ({onSubmit, onCancel}) =>
         setValue(e.target.value as string)
     }, [])
 	const valid = useMemo(() => {
-		if (!value.startsWith('github://')) return false
+		if (!value.startsWith('gh://')) return false
 		if (value.split('/').length < 6) return false
 		return true
 	}, [value])
 	return (
 		<div>
-			<p>Github URI in the form <pre>github://user/repo/branch/file</pre></p>
+			<p>Github URI in the form <pre>gh://user/repo/branch/file</pre></p>
 			<Input type="text" value={value} onChange={handleChange} />
 			<Button onClick={() => onSubmit(value)} disabled={!valid}>Submit</Button>
 			<Button onClick={onCancel}>Cancel</Button>
