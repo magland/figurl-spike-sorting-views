@@ -4,6 +4,7 @@ import { getFileData, storeFileData, storeGithubFileData, useSignedIn } from "@f
 import { Button } from "@material-ui/core";
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import EditGithubUriControl from './EditGithubUriControl';
+import FormatUri from './FormatUri';
 
 type Props ={
 	fallbackUri?: string
@@ -285,7 +286,7 @@ const SaveControl: FunctionComponent<Props> = ({fallbackUri, uri, setUri, object
 				}
 
 				<div style={{paddingLeft: 8, fontSize: 12}}>
-					URI: {uri}
+					URI: <FormatUri uri={uri} />
 				</div>
 				
 			</div>
