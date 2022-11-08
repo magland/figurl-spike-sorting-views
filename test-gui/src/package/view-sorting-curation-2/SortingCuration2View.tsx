@@ -19,7 +19,8 @@ const SortingCuration2View: FunctionComponent<Props> = ({width, height}) => {
     const {selectedUnitIds: selectedUnitIdsSet, orderedUnitIds, unitIdSelectionDispatch} = useSelectedUnitIds()
 
     const {urlState, updateUrlState} = useUrlState()
-	const sortingCurationUri = useMemo(() => (urlState['sortingCuration']), [urlState])
+	const sortingCurationUri: string | undefined = useMemo(() => (urlState['sortingCuration']), [urlState])
+    const initialSortingCurationUri: string | undefined = useMemo(() => (urlState['initialSortingCuration']), [urlState])
     const setSortingCurationUri = useCallback((uri: string) => {updateUrlState({sortingCuration: uri})}, [updateUrlState])
 
     const selectedUnitIds = useMemo(() => (
@@ -125,6 +126,7 @@ const SortingCuration2View: FunctionComponent<Props> = ({width, height}) => {
             }
             <hr />
             <SaveControl
+                fallbackUri={initialSortingCurationUri}
                 uri={sortingCurationUri}
                 setUri={setSortingCurationUri}
                 object={sortingCuration}
