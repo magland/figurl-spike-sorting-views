@@ -6,6 +6,7 @@ import { WaveformColors } from './WaveformWidget/WaveformPlot';
 import WaveformWidget from './WaveformWidget/WaveformWidget';
 
 export type AverageWaveformPlotProps = {
+    allChannelIds: (number | string)[]
     channelIds: (number | string)[]
     units: {
         channelIds: (number | string)[]
@@ -25,7 +26,7 @@ export type AverageWaveformPlotProps = {
     disableAutoRotate?: boolean
 }
 
-const AverageWaveformPlot: FunctionComponent<AverageWaveformPlotProps> = ({channelIds, units, layoutMode, channelLocations, samplingFrequency, peakAmplitude, ampScaleFactor, showChannelIds, showReferenceProbe, disableAutoRotate, width, height}) => {
+const AverageWaveformPlot: FunctionComponent<AverageWaveformPlotProps> = ({allChannelIds, channelIds, units, layoutMode, channelLocations, samplingFrequency, peakAmplitude, ampScaleFactor, showChannelIds, showReferenceProbe, disableAutoRotate, width, height}) => {
     const electrodes = useMemo(() => {
         const locs = channelLocations || {}
         return channelIds.map(channelId => ({
@@ -35,7 +36,6 @@ const AverageWaveformPlot: FunctionComponent<AverageWaveformPlotProps> = ({chann
             y: locs[`${channelId}`] !== undefined ? locs[`${channelId}`][1] : 0
         }))
     }, [channelIds, channelLocations])
-    const allChannelIds = useMemo(() => (Object.keys(channelLocations || {})), [channelLocations])
     const allElectrodes = useMemo(() => {
         const locs = channelLocations || {}
         return allChannelIds.map(channelId => ({

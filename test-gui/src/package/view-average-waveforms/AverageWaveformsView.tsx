@@ -18,6 +18,17 @@ type Props = {
 }
 
 const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) => {
+    const allChannelIds = useMemo(() => {
+        const allChannelIds: (string | number)[] = []
+        for (let x of data.averageWaveforms) {
+            for (let id of x.channelIds) {
+                if (!allChannelIds.includes(id)) {
+                    allChannelIds.push(id)
+                }
+            }
+        }
+        return sortIds(allChannelIds)
+    }, [data.averageWaveforms])
     const [toolbarOptions, setToolbarOptions] = useState<UnitsTableBottomToolbarOptions>({...defaultUnitsTableBottomToolbarOptions, onlyShowSelected: false})
     const {selectedUnitIds, orderedUnitIds, plotClickHandlerGenerator, unitIdSelectionDispatch} = useSelectedUnitIds()
 
@@ -62,6 +73,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             }
         ]
         const props: AverageWaveformPlotProps = {
+            allChannelIds,
             channelIds: aw.channelIds,
             units,
             layoutMode: waveformsMode,
@@ -83,7 +95,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             clickHandler: !toolbarOptions.onlyShowSelected ? plotClickHandlerGenerator(aw.unitId) : undefined,
             props
         }
-    }), [data.averageWaveforms, data.channelLocations, data.samplingFrequency, peakAmplitude, waveformsMode, ampScaleFactor, plotClickHandlerGenerator, toolbarOptions.onlyShowSelected, selectedUnitIds, plotBoxScaleFactor, showWaveformStdev, showChannelIds, showReferenceProbe, showOverlapping])
+    }), [data.averageWaveforms, data.channelLocations, data.samplingFrequency, allChannelIds, peakAmplitude, waveformsMode, ampScaleFactor, plotClickHandlerGenerator, toolbarOptions.onlyShowSelected, selectedUnitIds, plotBoxScaleFactor, showWaveformStdev, showChannelIds, showReferenceProbe, showOverlapping])
 
     const plots2: PGPlot[] = useMemo(() => {
         if (orderedUnitIds) {
