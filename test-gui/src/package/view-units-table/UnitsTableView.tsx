@@ -1,9 +1,7 @@
-import { useSortingCuration } from '..';
-import { ColorPatchUnitIdLabel, ColorPatchUnitLabelProps, mergeGroupForUnitId, SortableTableWidget, SortableTableWidgetColumn, SortableTableWidgetRow } from '../component-sortable-table';
-import { sortIds } from '..';
-import { defaultUnitsTableBottomToolbarOptions, UnitsTableBottomToolbar, UnitsTableBottomToolbarOptions } from '../ViewToolbar';
 import React, { FunctionComponent, KeyboardEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
-import { idToNum, INITIALIZE_UNITS, UNIQUE_SELECT_FIRST, UNIQUE_SELECT_LAST, UNIQUE_SELECT_NEXT, UNIQUE_SELECT_PREVIOUS, useSelectedUnitIds } from '..';
+import { idToNum, INITIALIZE_UNITS, sortIds, UNIQUE_SELECT_FIRST, UNIQUE_SELECT_LAST, UNIQUE_SELECT_NEXT, UNIQUE_SELECT_PREVIOUS, useSelectedUnitIds, useSortingCuration } from '..';
+import { ColorPatchUnitIdLabel, ColorPatchUnitLabelProps, mergeGroupForUnitId, SortableTableWidget, SortableTableWidgetColumn, SortableTableWidgetRow } from '../component-sortable-table';
+import { defaultUnitsTableBottomToolbarOptions, UnitsTableBottomToolbar, UnitsTableBottomToolbarOptions } from '../ViewToolbar';
 import { UnitsTableViewData } from './UnitsTableViewData';
 
 type Props = {
@@ -16,7 +14,7 @@ const UnitsTableView: FunctionComponent<Props> = ({data, width, height}) => {
     const [toolbarOptions, setToolbarOptions] = useState<UnitsTableBottomToolbarOptions>(
         {...defaultUnitsTableBottomToolbarOptions, onlyShowSelected: false}
     )
-    const {selectedUnitIds, orderedUnitIds, visibleUnitIds, primarySortRule, checkboxClickHandlerGenerator, unitIdSelectionDispatch} = useSelectedUnitIds()
+    const {selectedUnitIds, currentUnitId, orderedUnitIds, visibleUnitIds, primarySortRule, checkboxClickHandlerGenerator, unitIdSelectionDispatch} = useSelectedUnitIds()
     const {sortingCuration} = useSortingCuration()
 
     const visibleUnitIds2 = useMemo(() => (
@@ -65,8 +63,12 @@ const UnitsTableView: FunctionComponent<Props> = ({data, width, height}) => {
         return ret
     }, [data.columns, sortingCuration])
 
-    const rows = useMemo(() => (
-        data.rows.map(r => {
+    const rows = useMemo(() => {
+        // depend on orderedUnitIds so we can trigger re-render when unit colors have been redistributed
+        for (let i = 0; i < 0; i++) {
+            orderedUnitIds.push('never-added')
+        }
+        return data.rows.map(r => {
             const curationLabels = ((sortingCuration?.labelsByUnit || {})[`${r.unitId}`] || [])
             const unitIdData = {
                 value: {unitId: r.unitId, mergeGroup: mergeGroupForUnitId(r.unitId, sortingCuration)},
@@ -89,10 +91,11 @@ const UnitsTableView: FunctionComponent<Props> = ({data, width, height}) => {
             return {
                 rowId: r.unitId,
                 data: rowData,
-                checkboxFn: !toolbarOptions.onlyShowSelected ? checkboxClickHandlerGenerator(r.unitId) : undefined
+                // checkboxFn: !toolbarOptions.onlyShowSelected ? checkboxClickHandlerGenerator(r.unitId) : undefined
+                checkboxFn: checkboxClickHandlerGenerator(r.unitId)
             }
         })
-    ), [data.rows, data.columns, sortingCuration, checkboxClickHandlerGenerator, toolbarOptions.onlyShowSelected])
+    }, [data.rows, data.columns, sortingCuration, checkboxClickHandlerGenerator, orderedUnitIds])
 
     useEffect(() => {
         unitIdSelectionDispatch({ type: INITIALIZE_UNITS, newUnitOrder: sortIds(rows.map(r => (r.rowId))) })
@@ -140,6 +143,10 @@ const UnitsTableView: FunctionComponent<Props> = ({data, width, height}) => {
         }
     }, [unitIdSelectionDispatch])
 
+    const handleRedistributeUnitColors = useCallback(() => {
+        unitIdSelectionDispatch({type: 'REDISTRIBUTE_UNIT_COLORS'})
+    }, [unitIdSelectionDispatch])
+
     return (
         <div>
             <div
@@ -152,15 +159,17 @@ const UnitsTableView: FunctionComponent<Props> = ({data, width, height}) => {
                     orderedUnitIds={orderedUnitIds}
                     visibleUnitIds={visibleUnitIds2}
                     selectedUnitIds={selectedUnitIds}
+                    currentUnitId={currentUnitId}
                     selectionDispatch={unitIdSelectionDispatch}
                     primarySortRule={primarySortRule}
-                    hideSelectionColumn={toolbarOptions.onlyShowSelected}
+                    // hideSelectionColumn={toolbarOptions.onlyShowSelected}
                 />
             </div>
             <div style={{position: 'absolute', top: height - bottomToolbarHeight, height: bottomToolbarHeight, overflow: 'hidden'}}>
                 <UnitsTableBottomToolbar
                     options={toolbarOptions}
                     setOptions={setToolbarOptions}
+                    onRedistributeUnitColors={handleRedistributeUnitColors}
                 />
             </div>
         </div>

@@ -1,7 +1,7 @@
-import { colorForUnitId } from "@figurl/core-utils";
-import { idToNum } from "..";
-import { FunctionComponent, useCallback, useMemo } from "react";
 import { ScatterPlot, ScatterPlotMarker } from '@figurl/core-views';
+import { FunctionComponent, useCallback, useMemo } from "react";
+import { idToNum } from "..";
+import { getUnitColor } from "../view-units-table/unitColors";
 import { UMGMetric, UMGUnit } from "./UnitMetricsGraphViewData";
 
 export type UnitMetricScatterPlotProps = {
@@ -26,7 +26,7 @@ const UnitMetricScatterPlot: FunctionComponent<UnitMetricScatterPlotProps> = ({m
                     key: unit.unitId,
                     x: xValue,
                     y: yValue,
-                    color: selectedUnitIds.has(unit.unitId) ? colorForUnitId(idToNum(unit.unitId)) : 'lightgray',
+                    color: selectedUnitIds.has(unit.unitId) ? getUnitColor(idToNum(unit.unitId)) : 'lightgray',
                     radius,
                     tooltip: `Unit ${unit.unitId}`
                 })

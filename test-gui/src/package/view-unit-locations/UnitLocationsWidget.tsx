@@ -1,13 +1,11 @@
-import { useSelectedElectrodes } from '@figurl/timeseries-views'
-import { BaseCanvas } from '@figurl/core-views'
-import { pointInRect, RectangularRegion, rectangularRegionsIntersect, transformPoint, Vec2, Vec4 } from '@figurl/core-views'
-import { colorForUnitId } from '@figurl/core-utils'
-import { idToNum, useSelectedUnitIds } from '..'
-import { useCallback, useMemo } from 'react'
-import { AffineTransform, applyAffineTransform, applyAffineTransformInv, detAffineTransform } from '../view-unit-similarity-matrix'
-import { useWheelZoom } from '../view-unit-similarity-matrix'
 import { useDragSelectLayer } from '@figurl/core-utils'
+import { BaseCanvas, pointInRect, RectangularRegion, rectangularRegionsIntersect, transformPoint, Vec2, Vec4 } from '@figurl/core-views'
+import { useSelectedElectrodes } from '@figurl/timeseries-views'
+import { useCallback, useMemo } from 'react'
+import { idToNum, useSelectedUnitIds } from '..'
 import { computeElectrodeLocations, defaultColors, ElectrodeColors } from '../view-average-waveforms'
+import { AffineTransform, applyAffineTransform, applyAffineTransformInv, detAffineTransform, useWheelZoom } from '../view-unit-similarity-matrix'
+import { getUnitColor } from '../view-units-table/unitColors'
 
 export const defaultMaxPixelRadius = 25
 const circle = 2 * Math.PI
@@ -168,7 +166,7 @@ const UnitLocationsWidget = (props: WidgetProps) => {
             const pt0 = transformPoint(transform, [unit.x, unit.y])
             const pt = applyAffineTransform(affineTransform, {x: pt0[0], y: pt0[1]})
             const col = selectedUnitIds.size === 0 || selectedUnitIds.has(unit.unitId) ? (
-                colorForUnitId(idToNum(unit.unitId))
+                getUnitColor(idToNum(unit.unitId))
             ) : 'rgb(220, 220, 220)'
             drawUnit(pt.x, pt.y, col)
         }

@@ -8,6 +8,7 @@ import { ColorPatchUnitIdLabel, ColorPatchUnitLabelProps, mergeGroupForUnitId } 
 export type SelectUnitsWidgetProps = {
     unitIds: (number | string)[]
     selectedUnitIds: Set<number | string>,
+    currentUnitId: number | string | undefined
     orderedUnitIds: (number | string)[],
     visibleUnitIds?: (number | string)[],
     primarySortRule?: SortingRule,
@@ -17,7 +18,7 @@ export type SelectUnitsWidgetProps = {
 }
 
 const SelectUnitsWidget: FunctionComponent<SelectUnitsWidgetProps> = (props: SelectUnitsWidgetProps) => {
-    const { unitIds, orderedUnitIds, visibleUnitIds, selectedUnitIds, primarySortRule, checkboxClickHandlerGenerator, unitIdSelectionDispatch, selectionDisabled }  = props
+    const { unitIds, orderedUnitIds, visibleUnitIds, selectedUnitIds, currentUnitId, primarySortRule, checkboxClickHandlerGenerator, unitIdSelectionDispatch, selectionDisabled }  = props
     const {sortingCuration} = useSortingCuration()
 
     const columns = useMemo(() => ([
@@ -61,6 +62,7 @@ const SelectUnitsWidget: FunctionComponent<SelectUnitsWidgetProps> = (props: Sel
     return (
         <SortableTableWidget
             selectedUnitIds={selectedUnitIds}
+            currentUnitId={currentUnitId}
             selectionDispatch={unitIdSelectionDispatch}
             columns={columns}
             rows={rowMap}

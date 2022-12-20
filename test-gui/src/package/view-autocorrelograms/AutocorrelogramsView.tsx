@@ -1,10 +1,8 @@
+import { PGPlot, PlotGrid, Splitter, VerticalScrollView } from '@figurl/core-views';
 import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
-import { PGPlot, PlotGrid } from '@figurl/core-views';
-import { Splitter } from '@figurl/core-views';
-import { colorForUnitId } from '@figurl/core-utils';
 import { idToNum, INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '../context-unit-selection';
-import { VerticalScrollView } from '@figurl/core-views';
+import { getUnitColor } from '../view-units-table/unitColors';
 import { defaultUnitsTableBottomToolbarOptions, ToolbarItem, UnitsTableBottomToolbar, UnitsTableBottomToolbarOptions, ViewToolbar } from '../ViewToolbar';
 import { AutocorrelogramsViewData } from './AutocorrelogramsViewData';
 import CorrelogramPlot from './CorrelogramPlot';
@@ -29,12 +27,12 @@ const AutocorrelogramsView: FunctionComponent<Props> = ({data, width, height}) =
         unitId: ac.unitId,
         key: ac.unitId,
         label: `Unit ${ac.unitId}`,
-        labelColor: colorForUnitId(idToNum(ac.unitId)),
+        labelColor: getUnitColor(idToNum(ac.unitId)),
         clickHandler: !toolbarOptions.onlyShowSelected ? plotClickHandlerGenerator(ac.unitId) : undefined,
         props: {
             binEdgesSec: ac.binEdgesSec,
             binCounts: ac.binCounts,
-            color: colorForUnitId(idToNum(ac.unitId)),
+            color: getUnitColor(idToNum(ac.unitId)),
             width: 120 * plotBoxScaleFactor,
             height: 120 * plotBoxScaleFactor,
             hideXAxis: !showXAxis

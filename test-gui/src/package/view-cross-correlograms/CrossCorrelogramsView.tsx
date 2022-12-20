@@ -1,14 +1,11 @@
-import { PlotGrid, PGPlot } from '@figurl/core-views';
+import { PGPlot, PlotGrid, Splitter, VerticalScrollView } from '@figurl/core-views';
+import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { idToNum, INITIALIZE_UNITS, sortIds } from '..';
-import {Splitter} from '@figurl/core-views';
-import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
-import {CorrelogramPlot} from '../view-autocorrelograms';
-import { LockableSelectUnitsWidget } from '../SelectUnitsWidget';
-import { useLocalSelectedUnitIds } from '../SelectUnitsWidget';
-import { CrossCorrelogramData, CrossCorrelogramsViewData } from './CrossCorrelogramsViewData';
-import { colorForUnitId } from '@figurl/core-utils';
+import { LockableSelectUnitsWidget, useLocalSelectedUnitIds } from '../SelectUnitsWidget';
+import { CorrelogramPlot } from '../view-autocorrelograms';
+import { getUnitColor } from '../view-units-table/unitColors';
 import { ToolbarItem, ViewToolbar } from '../ViewToolbar';
-import { VerticalScrollView } from '@figurl/core-views';
+import { CrossCorrelogramData, CrossCorrelogramsViewData } from './CrossCorrelogramsViewData';
 
 type Props = {
     data: CrossCorrelogramsViewData
@@ -19,7 +16,7 @@ type Props = {
 const MAX_UNITS_SELECTED = 10
 
 const CrossCorrelogramsView: FunctionComponent<Props> = ({data, width, height}) => {
-    const {selectedUnitIds, orderedUnitIds, visibleUnitIds, primarySortRule, checkboxClickHandlerGenerator, unitIdSelectionDispatch, selectionLocked, toggleSelectionLocked} = useLocalSelectedUnitIds()
+    const {selectedUnitIds, currentUnitId, orderedUnitIds, visibleUnitIds, primarySortRule, checkboxClickHandlerGenerator, unitIdSelectionDispatch, selectionLocked, toggleSelectionLocked} = useLocalSelectedUnitIds()
 
     const allIds = useMemo(() => {
         let allIds: (number | string)[] = []
@@ -62,6 +59,7 @@ const CrossCorrelogramsView: FunctionComponent<Props> = ({data, width, height}) 
                 <LockableSelectUnitsWidget
                     unitIds={allIds}
                     selectedUnitIds={selectedUnitIds}
+                    currentUnitId={currentUnitId}
                     orderedUnitIds={orderedUnitIds}
                     visibleUnitIds={visibleUnitIds}
                     primarySortRule={primarySortRule}
@@ -121,7 +119,7 @@ const CrossCorrelogramsViewChild: FunctionComponent<ChildProps> = ({data, width,
             props: {
                 binEdgesSec: cc ? cc.binEdgesSec: undefined,
                 binCounts: cc ? cc.binCounts : undefined,
-                color: cc?.unitId1 === cc?.unitId2 ? colorForUnitId(idToNum(cc?.unitId1)) : 'gray',
+                color: cc?.unitId1 === cc?.unitId2 ? getUnitColor(idToNum(cc?.unitId1)) : 'gray',
                 width: plotWidth,
                 height: plotHeight,
                 hideXAxis: !showXAxis

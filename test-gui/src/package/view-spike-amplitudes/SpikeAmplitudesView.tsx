@@ -1,18 +1,13 @@
-import { AmplitudeScaleToolbarEntries } from '../AmplitudeScaleToolbarEntries'
-import { useRecordingSelectionTimeInitialization, useTimeRange } from '@figurl/timeseries-views'
 import { Splitter } from '@figurl/core-views'
-import { colorForUnitId } from '@figurl/core-utils'
-import { idToNum } from '..'
+import { DefaultToolbarWidth, TimeScrollView, TimeScrollViewPanel, usePanelDimensions, useProjectedYAxisTicks, useRecordingSelectionTimeInitialization, useTimeRange, useTimeseriesMargins, useYAxisTicks } from '@figurl/timeseries-views'
 import { FunctionComponent, useMemo, useState } from 'react'
+import { idToNum } from '..'
+import { AmplitudeScaleToolbarEntries } from '../AmplitudeScaleToolbarEntries'
+import { LockableSelectUnitsWidget, useLocalSelectedUnitIds } from '../SelectUnitsWidget'
 import { convert2dDataSeries, getYAxisPixelZero, use2dScalingMatrix } from '../util-point-projection'
-import { LockableSelectUnitsWidget } from '../SelectUnitsWidget'
-import { useLocalSelectedUnitIds } from '../SelectUnitsWidget'
-import { TimeScrollView, TimeScrollViewPanel } from '@figurl/timeseries-views'
-import { usePanelDimensions, useTimeseriesMargins } from '@figurl/timeseries-views'
-import { useYAxisTicks, useProjectedYAxisTicks } from '@figurl/timeseries-views'
-import { DefaultToolbarWidth } from '@figurl/timeseries-views'
-import { SpikeAmplitudesViewData } from './SpikeAmplitudesViewData'
 import { TimeseriesLayoutOpts } from '../view-raster-plot/RasterPlotView'
+import { getUnitColor } from '../view-units-table/unitColors'
+import { SpikeAmplitudesViewData } from './SpikeAmplitudesViewData'
 
 type Props = {
     data: SpikeAmplitudesViewData
@@ -34,7 +29,7 @@ const panelSpacing = 4
 const MAX_UNITS_SELECTED = 10
 
 const SpikeAmplitudesView: FunctionComponent<Props> = ({data, timeseriesLayoutOpts, width, height}) => {
-    const {selectedUnitIds, orderedUnitIds, visibleUnitIds, checkboxClickHandlerGenerator, unitIdSelectionDispatch, selectionLocked, toggleSelectionLocked} = useLocalSelectedUnitIds()
+    const {selectedUnitIds, currentUnitId, orderedUnitIds, visibleUnitIds, checkboxClickHandlerGenerator, unitIdSelectionDispatch, selectionLocked, toggleSelectionLocked} = useLocalSelectedUnitIds()
 
     const allUnitIds = useMemo(() => (
         data.units.map(u => (u.unitId))
@@ -51,6 +46,7 @@ const SpikeAmplitudesView: FunctionComponent<Props> = ({data, timeseriesLayoutOp
                     <LockableSelectUnitsWidget
                         unitIds={allUnitIds}
                         selectedUnitIds={selectedUnitIds}
+                        currentUnitId={currentUnitId}
                         orderedUnitIds={orderedUnitIds}
                         visibleUnitIds={visibleUnitIds}
                         checkboxClickHandlerGenerator={checkboxClickHandlerGenerator}
@@ -97,7 +93,7 @@ const paintPanel = (context: CanvasRenderingContext2D, props: PanelProps) => {
     context.setLineDash([]);
 
     for (let unit of props.units) {
-        context.fillStyle = colorForUnitId(idToNum(unit.unitId))
+        context.fillStyle = getUnitColor(idToNum(unit.unitId))
         for (let i=0; i<unit.pixelTimes.length; i++) {
             const x = unit.pixelTimes[i]
             const y = unit.pixelAmplitudes[i]

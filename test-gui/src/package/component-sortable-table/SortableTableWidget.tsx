@@ -7,7 +7,7 @@ import SortableTableWidgetHeaderRow, { sorterCallbackWrapper } from './SortableT
 import { ColsDict, SortableTableProps, SortableTableWidgetRow } from './SortableTableWidgetTypes';
 
 const SortableTableWidget: FunctionComponent<SortableTableProps> = (props) => {
-    const { selectedUnitIds, selectionDispatch, rows, columns, orderedUnitIds, visibleUnitIds, primarySortRule, height, selectionDisabled, hideSelectionColumn } = props
+    const { selectedUnitIds, currentUnitId, selectionDispatch, rows, columns, orderedUnitIds, visibleUnitIds, primarySortRule, height, selectionDisabled, hideSelectionColumn } = props
     const _visibleUnitIds = useMemo(() => {return visibleUnitIds && visibleUnitIds.length > 0 ? visibleUnitIds : orderedUnitIds}, [visibleUnitIds, orderedUnitIds])
     const allUnitSelectionStatus = useMemo(() => allUnitSelectionState({selectedUnitIds, orderedUnitIds, visibleUnitIds: _visibleUnitIds}), [selectedUnitIds, orderedUnitIds, _visibleUnitIds])
     const rowSorter = useCallback((colsDict: ColsDict) => sorterCallbackWrapper(rows, colsDict), [rows])
@@ -60,13 +60,14 @@ const SortableTableWidget: FunctionComponent<SortableTableProps> = (props) => {
                     key={row.rowId}
                     rowId={row.rowId}
                     selected={selectedUnitIds.has(row.rowId)}
+                    current={currentUnitId === row.rowId}
                     onClick={!hideSelectionColumn ? (row.checkboxFn || voidClickHandler) : undefined}
                     isDisabled={selectionDisabled || false}
                     contentRepository={_contentFieldsByRow}
                 />
             )
         })
-    }, [selectedUnitIds, visibleRows,_contentFieldsByRow, selectionDisabled, hideSelectionColumn])
+    }, [selectedUnitIds, currentUnitId, visibleRows,_contentFieldsByRow, selectionDisabled, hideSelectionColumn])
 
     return (
         <TableContainer style={height !== undefined ? {maxHeight: height} : {}}>

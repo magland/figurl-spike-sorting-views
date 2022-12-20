@@ -16,7 +16,7 @@ type Props = {
 const MAX_UNITS_SELECTED = 10
 
 const SpikeLocationsView: FunctionComponent<Props> = ({data, width, height}) => {
-    const {selectedUnitIds, orderedUnitIds, visibleUnitIds, checkboxClickHandlerGenerator, unitIdSelectionDispatch, selectionLocked, toggleSelectionLocked} = useLocalSelectedUnitIds()
+    const {selectedUnitIds, currentUnitId, orderedUnitIds, visibleUnitIds, checkboxClickHandlerGenerator, unitIdSelectionDispatch, selectionLocked, toggleSelectionLocked} = useLocalSelectedUnitIds()
 
     const allUnitIds = useMemo(() => (
         data.units.map(u => (u.unitId))
@@ -33,6 +33,7 @@ const SpikeLocationsView: FunctionComponent<Props> = ({data, width, height}) => 
                     <LockableSelectUnitsWidget
                         unitIds={allUnitIds}
                         selectedUnitIds={selectedUnitIds}
+                        currentUnitId={currentUnitId}
                         orderedUnitIds={orderedUnitIds}
                         visibleUnitIds={visibleUnitIds}
                         checkboxClickHandlerGenerator={checkboxClickHandlerGenerator}

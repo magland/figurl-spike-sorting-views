@@ -8,7 +8,7 @@ const useLocalSelectedUnitIds = () => {
     const toggleSelectionLocked = useCallback(() => {
         setSelectionLocked(a => (!a))
     }, [])
-    const {selectedUnitIds, orderedUnitIds, visibleUnitIds, primarySortRule, checkboxClickHandlerGenerator, unitIdSelectionDispatch, currentState} = useSelectedUnitIds()
+    const {selectedUnitIds, currentUnitId, orderedUnitIds, visibleUnitIds, primarySortRule, checkboxClickHandlerGenerator, unitIdSelectionDispatch, currentState} = useSelectedUnitIds()
     const [localSelectedUnitIds, localUnitIdSelectionDispatch] = useReducer(unitSelectionReducer, defaultUnitSelection)
     
     useEffect(() => {
@@ -35,6 +35,7 @@ const useLocalSelectedUnitIds = () => {
 
     return {
         selectedUnitIds: selectionLocked ? localSelectedUnitIds.selectedUnitIds : selectedUnitIds,
+        currentUnitId: selectionLocked ? localSelectedUnitIds.currentUnitId : currentUnitId,
         orderedUnitIds: selectionLocked ? localSelectedUnitIds.orderedUnitIds : orderedUnitIds,
         visibleUnitIds: selectionLocked ? localSelectedUnitIds.visibleUnitIds : visibleUnitIds,
         unitIdSelectionDispatch: selectionLocked ? localUnitIdSelectionDispatch : unitIdSelectionDispatch,

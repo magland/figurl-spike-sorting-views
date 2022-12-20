@@ -14,7 +14,8 @@ type Props = {
 
 const standardLabelChoices = ['accept', 'reject', 'noise', 'artifact', 'mua']
 
-const SortingCuration2View: FunctionComponent<Props> = ({width, height}) => {
+const SortingCuration2View: FunctionComponent<Props> = ({data, width, height}) => {
+    const {labelChoices: labelChoicesFromData} = data
     const {sortingCuration, sortingCurationDispatch} = useSortingCuration()
     const {selectedUnitIds: selectedUnitIdsSet, orderedUnitIds, unitIdSelectionDispatch} = useSelectedUnitIds()
 
@@ -27,8 +28,8 @@ const SortingCuration2View: FunctionComponent<Props> = ({width, height}) => {
         orderedUnitIds.filter(x => (selectedUnitIdsSet && selectedUnitIdsSet.has(x))
     )), [selectedUnitIdsSet, orderedUnitIds])
     const labelChoices = useMemo(() => (
-        getAllLabelChoices(sortingCuration)
-    ), [sortingCuration])
+        getAllLabelChoices(sortingCuration, labelChoicesFromData)
+    ), [sortingCuration, labelChoicesFromData])
     const labelCheckboxStates = useMemo(() => (
         getLabelCheckboxStates(labelChoices, sortingCuration, selectedUnitIds, sortingCurationDispatch === undefined)
     ), [labelChoices, sortingCuration, selectedUnitIds, sortingCurationDispatch])
@@ -163,8 +164,8 @@ const getLabelCheckboxStates = (labelChoices: string[], sortingCuration: Sorting
     return ret
 }
 
-export const getAllLabelChoices = (curation: SortingCuration | undefined) => {
-    const ret = [...standardLabelChoices]
+export const getAllLabelChoices = (curation: SortingCuration | undefined, labelChoicesFromData: string[] | undefined) => {
+    const ret = labelChoicesFromData ? [...labelChoicesFromData] : [...standardLabelChoices]
     if (curation !== undefined) {
         for (let a of Object.values(curation.labelsByUnit || {})) {
             for (let label of a) {

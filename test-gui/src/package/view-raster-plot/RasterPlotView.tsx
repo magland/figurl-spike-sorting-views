@@ -1,13 +1,10 @@
-import { useRecordingSelectionTimeInitialization, useTimeRange } from '@figurl/timeseries-views'
-import { useSelectedUnitIds } from '..'
+import { DefaultToolbarWidth, TimeScrollView, usePanelDimensions, useRecordingSelectionTimeInitialization, useTimeRange, useTimeseriesMargins } from '@figurl/timeseries-views'
 import { FunctionComponent, useCallback, useMemo } from 'react'
+import { useSelectedUnitIds } from '..'
+import { idToNum } from '../context-unit-selection'
 import { convert1dDataSeries, use1dScalingMatrix } from '../util-point-projection'
-import { colorForUnitId } from '@figurl/core-utils'
-import { TimeScrollView } from '@figurl/timeseries-views'
-import { usePanelDimensions, useTimeseriesMargins } from '@figurl/timeseries-views'
-import { DefaultToolbarWidth } from '@figurl/timeseries-views'
+import { getUnitColor } from '../view-units-table/unitColors'
 import { RasterPlotViewData } from './RasterPlotViewData'
-import { idToNum } from '../context-unit-selection';
 
 type Props = {
     data: RasterPlotViewData
@@ -68,7 +65,7 @@ const RasterPlotView: FunctionComponent<Props> = ({data, timeseriesLayoutOpts, w
             key: `${plot.unitId}`,
             label: `${plot.unitId}`,
             props: {
-                color: colorForUnitId(idToNum(plot.unitId)),
+                color: getUnitColor(idToNum(plot.unitId)),
                 pixelSpikes: pixelSpikes
             },
             paint: paintPanel

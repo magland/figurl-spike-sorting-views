@@ -1,8 +1,8 @@
-import determineTickLocationsMsec from "./determineTickLocationsMsec";
 import { BarPlot, BarPlotBar, BarPlotTick, BarPlotVerticalLine } from "@figurl/core-views";
-import { colorForUnitId } from "@figurl/core-utils";
-import { idToNum } from "..";
 import { FunctionComponent, useCallback, useMemo } from "react";
+import { idToNum } from "..";
+import { getUnitColor } from "../view-units-table/unitColors";
+import determineTickLocationsMsec from "./determineTickLocationsMsec";
 import { UMGMetric, UMGUnit } from "./UnitMetricsGraphViewData";
 
 export type UnitMetricHistogramProps = {
@@ -20,7 +20,7 @@ const UnitMetricHistogram: FunctionComponent<UnitMetricHistogramProps> = ({metri
         const values = units.map(unit => (unit.values[metric.key])).filter(a => (a !== undefined)).map(a => (a as number))
         const valuesSelected = units.filter(u => (selectedUnitIds.has(u.unitId))).map(unit => (unit.values[metric.key])).filter(a => (a !== undefined)).map(a => (a as number))
         const unitIdsSelected = units.filter(u => (selectedUnitIds.has(u.unitId))).map(unit => ({unitId: unit.unitId, value: unit.values[metric.key]})).filter(a => (a.value !== undefined)).map(a => (a.unitId))
-        const colorsSelected = unitIdsSelected.map(u => (colorForUnitId(idToNum(u))))
+        const colorsSelected = unitIdsSelected.map(u => (getUnitColor(idToNum(u))))
         return createHistogramBars(values, valuesSelected, colorsSelected, numBins || 10)
     }, [units, metric, selectedUnitIds, numBins])
     const handleSelectRect = useCallback((r: {x: number, y: number, width: number, height: number}, selectedBarKeys: (string | number)[], {ctrlKey, shiftKey}: {ctrlKey: boolean, shiftKey: boolean}) => {

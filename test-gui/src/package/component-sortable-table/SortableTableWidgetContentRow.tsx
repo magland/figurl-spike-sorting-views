@@ -6,15 +6,16 @@ import SortableTableWidgetCheckbox from './SortableTableWidgetCheckbox'
 type RowProps = {
     rowId: string | number,
     selected: boolean,
+    current: boolean,
     onClick?: (evt: React.MouseEvent) => void,
     isDisabled: boolean,
     contentRepository: {[key: string]: JSX.Element[]}
 }
 
 const SortableTableWidgetContentRow: FunctionComponent<RowProps> = (props: RowProps) => {
-    const {rowId, selected, onClick, isDisabled, contentRepository} = props
+    const {rowId, selected, current, onClick, isDisabled, contentRepository} = props
     const content = contentRepository[rowId]
-    return <TableRow key={rowId} className={selected ? "selectedRow": ""}>
+    return <TableRow key={rowId} className={current ? "currentRow" : selected ? "selectedRow": ""}>
         {
             onClick && (
                 <TableCell key="_checkbox">

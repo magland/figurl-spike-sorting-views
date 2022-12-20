@@ -14,7 +14,7 @@ type Props = {
 }
 
 const LiveCrossCorrelogramsView: FunctionComponent<Props> = ({data, width, height}) => {
-    const {selectedUnitIds, orderedUnitIds, visibleUnitIds, primarySortRule, checkboxClickHandlerGenerator, unitIdSelectionDispatch, selectionLocked, toggleSelectionLocked} = useLocalSelectedUnitIds()
+    const {selectedUnitIds, currentUnitId, orderedUnitIds, visibleUnitIds, primarySortRule, checkboxClickHandlerGenerator, unitIdSelectionDispatch, selectionLocked, toggleSelectionLocked} = useLocalSelectedUnitIds()
 
     const listLengthScaler = useMemo(() => Math.pow(10, Math.ceil(Math.log10(data.unitIds.length))), [data.unitIds])
 
@@ -31,6 +31,7 @@ const LiveCrossCorrelogramsView: FunctionComponent<Props> = ({data, width, heigh
             <LockableSelectUnitsWidget
                 unitIds={data.unitIds}
                 selectedUnitIds={selectedUnitIds}
+                currentUnitId={currentUnitId}
                 orderedUnitIds={orderedUnitIds}
                 visibleUnitIds={visibleUnitIds}
                 primarySortRule={primarySortRule}

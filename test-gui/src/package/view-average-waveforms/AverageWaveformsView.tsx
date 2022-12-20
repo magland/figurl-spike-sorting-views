@@ -1,12 +1,10 @@
-import { AmplitudeScaleToolbarEntries } from '../AmplitudeScaleToolbarEntries';
+import { PGPlot, PlotGrid, Splitter, VerticalScrollView } from '@figurl/core-views';
 import { mean } from 'mathjs';
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
-import { PGPlot, PlotGrid } from '@figurl/core-views';
-import { Splitter } from '@figurl/core-views';
-import { colorForUnitId } from '@figurl/core-utils';
 import { idToNum, INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '..';
-import { VerticalScrollView } from '@figurl/core-views';
+import { AmplitudeScaleToolbarEntries } from '../AmplitudeScaleToolbarEntries';
+import { getUnitColor } from '../view-units-table/unitColors';
 import { defaultUnitsTableBottomToolbarOptions, ToolbarItem, UnitsTableBottomToolbar, UnitsTableBottomToolbarOptions, ViewToolbar } from '../ViewToolbar';
 import AverageWaveformPlot, { AverageWaveformPlotProps } from './AverageWaveformPlot';
 import { AverageWaveformsViewData } from './AverageWaveformsViewData';
@@ -30,7 +28,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
         return sortIds(allChannelIds)
     }, [data.averageWaveforms])
     const [toolbarOptions, setToolbarOptions] = useState<UnitsTableBottomToolbarOptions>({...defaultUnitsTableBottomToolbarOptions, onlyShowSelected: false})
-    const {selectedUnitIds, orderedUnitIds, plotClickHandlerGenerator, unitIdSelectionDispatch} = useSelectedUnitIds()
+    const {selectedUnitIds, currentUnitId, orderedUnitIds, plotClickHandlerGenerator, unitIdSelectionDispatch} = useSelectedUnitIds()
 
     const [ampScaleFactor, setAmpScaleFactor] = useState<number>(1)
     const [waveformsMode, setWaveformsMode] = useState<'geom' | 'vertical'>('geom')
@@ -69,7 +67,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
                 channelIds: aw.channelIds,
                 waveform: subtractChannelMeans(aw.waveform),
                 waveformStdDev: showWaveformStdev && !showOverlapping ? aw.waveformStdDev : undefined,
-                waveformColor: colorForUnitId(idToNum(aw.unitId))
+                waveformColor: getUnitColor(idToNum(aw.unitId))
             }
         ]
         const props: AverageWaveformPlotProps = {
@@ -91,7 +89,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             unitId: aw.unitId,
             key: aw.unitId,
             label: `Unit ${aw.unitId}`,
-            labelColor: colorForUnitId(idToNum(aw.unitId)),
+            labelColor: getUnitColor(idToNum(aw.unitId)),
             clickHandler: !toolbarOptions.onlyShowSelected ? plotClickHandlerGenerator(aw.unitId) : undefined,
             props
         }
@@ -222,6 +220,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
                         plots={plots3}
                         plotComponent={AverageWaveformPlot}
                         selectedPlotKeys={!toolbarOptions.onlyShowSelected ? selectedUnitIds : undefined}
+                        currentPlotKey={currentUnitId}
                     />
                 </VerticalScrollView>
             </Splitter>
@@ -240,12 +239,12 @@ const combinePlotsForOverlappingView = (plots: PGPlot[]): PGPlot[] => {
     const thePlot: PGPlot = {...plots[0], props: {...plots[0].props}}
 
     const plotProps: AverageWaveformPlotProps = thePlot.props as any as AverageWaveformPlotProps
-    thePlot.key = 'overlaping'
-    thePlot.label = 'Overlaping'
+    thePlot.key = 'overlapping'
+    thePlot.label = 'Overlapping'
     thePlot.labelColor = 'black'
-    thePlot.unitId = 'overlaping'
-    plotProps.height *= 2
-    plotProps.width *= 2
+    thePlot.unitId = 'overlapping'
+    plotProps.height *= 3
+    // plotProps.width *= 2
 
     const allChannelIdsSet = new Set<number | string>()
     for (let plot of plots) {

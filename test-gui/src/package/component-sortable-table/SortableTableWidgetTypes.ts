@@ -22,6 +22,7 @@ export type ColsDict = Map<string, SortableTableWidgetColumn>
 
 export interface SortableTableProps {
     selectedUnitIds: Set<number | string>
+    currentUnitId: number | string | undefined
     selectionDispatch: React.Dispatch<UnitSelectionAction>
     columns: SortableTableWidgetColumn[]
     rows: RowsDict

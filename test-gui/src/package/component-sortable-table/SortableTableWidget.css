@@ -11,6 +11,10 @@
     background-color: #b5d1ff;
 }
 
+.SortableTableWidget .MuiTableRow-root.currentRow {
+    background-color: #95b1df;
+}
+
 .SortCaretSpan {
     font-size: 16px;
     color: gray;

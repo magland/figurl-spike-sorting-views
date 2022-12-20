@@ -1,12 +1,11 @@
-import { BaseCanvas } from '@figurl/core-views'
-import { RectangularRegion, rectangularRegionsIntersect, transformPoint, Vec2, Vec4 } from '@figurl/core-views'
-import { computeElectrodeLocations, defaultColors, ElectrodeColors } from '../view-average-waveforms'
-import { useSelectedElectrodes } from '@figurl/timeseries-views'
-import { colorForUnitId } from '@figurl/core-utils'
 import { useDragSelectLayer } from '@figurl/core-utils'
-import { idToNum, useSelectedUnitIds } from '..'
-import { AffineTransform, applyAffineTransform, applyAffineTransformInv, detAffineTransform, useWheelZoom } from '../view-unit-similarity-matrix'
+import { BaseCanvas, RectangularRegion, rectangularRegionsIntersect, transformPoint, Vec2, Vec4 } from '@figurl/core-views'
+import { useSelectedElectrodes } from '@figurl/timeseries-views'
 import { useCallback, useMemo } from 'react'
+import { idToNum, useSelectedUnitIds } from '..'
+import { computeElectrodeLocations, defaultColors, ElectrodeColors } from '../view-average-waveforms'
+import { AffineTransform, applyAffineTransform, applyAffineTransformInv, detAffineTransform, useWheelZoom } from '../view-unit-similarity-matrix'
+import { getUnitColor } from '../view-units-table/unitColors'
 
 export const defaultMaxPixelRadius = 25
 const circle = 2 * Math.PI
@@ -184,7 +183,7 @@ const SpikeLocationsWidget = (props: WidgetProps) => {
         for (let unit of filteredUnits) {
             const pts = pixelPointsByUnit[unit.unitId]
             const col = selectedUnitIds.size === 0 || selectedUnitIds.has(unit.unitId) ? (
-                colorForUnitId(idToNum(unit.unitId))
+                getUnitColor(idToNum(unit.unitId))
             ) : 'rgb(220, 220, 220)'
             drawUnit(pts, col)
         }

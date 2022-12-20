@@ -1,4 +1,5 @@
 import React, { useContext, useMemo } from "react"
+import { redistributeUnitColors } from "../view-units-table/unitColors"
 import { getCheckboxClickHandlerGenerator, getPlotClickHandlerGenerator, selectUnique, selectUniqueFirst, selectUniqueLast, selectUniqueNext, selectUniquePrevious, setSelectionExplicit, toggleSelectAll, toggleSelectedRange, toggleSelectedUnit } from "./UnitSelectionFunctions"
 import { resetUnitOrder, updateSort } from "./UnitSelectionSortingFunctions"
 import { SortingCallback, SortingRule } from "./UnitSelectionTypes"
@@ -6,6 +7,7 @@ import { setRestrictedUnits, setVisibleUnits } from "./UnitSelectionVisibilityFu
 
 export type UnitSelection = {
     selectedUnitIds: Set<number | string>,
+    currentUnitId: number | string | undefined,
     orderedUnitIds: (number | string)[]
     lastClickedId?: number | string
     page?: number
@@ -36,7 +38,7 @@ export type UnitSelectionActionType = 'SET_SELECTION' | 'UNIQUE_SELECT' | 'UNIQU
                                      'INITIALIZE_UNITS' | 'SET_UNIT_ORDER' | 'UPDATE_SORT_FIELDS' |
                                      'SET_VISIBLE_UNITS' | // 'SET_WINDOW_SIZE' | 'SET_PAGE_NUMBER' |
                                      'COPY_STATE' |
-                                     'SET_RESTRICTED_UNITS'
+                                     'SET_RESTRICTED_UNITS' | 'REDISTRIBUTE_UNIT_COLORS'
 
 export const SET_SELECTION: UnitSelectionActionType = 'SET_SELECTION'
 export const UNIQUE_SELECT: UnitSelectionActionType = 'UNIQUE_SELECT'
@@ -63,6 +65,7 @@ export const COPY_STATE: UnitSelectionActionType = 'COPY_STATE'
 
 export const defaultUnitSelection = {
     selectedUnitIds: new Set<number | string>(),
+    currentUnitId: undefined,
     orderedUnitIds: []
 }
 
@@ -99,7 +102,7 @@ export const unitSelectionReducer = (s: UnitSelection, a: UnitSelectionAction): 
         case TOGGLE_SELECT_ALL:
             return toggleSelectAll(s)
         case DESELECT_ALL:
-            return { ...s, selectedUnitIds: new Set<number | string>() }
+            return { ...s, selectedUnitIds: new Set<number | string>(), currentUnitId: undefined }
         case SET_UNIT_ORDER:
             return resetUnitOrder(s, a)
         case UPDATE_SORT_FIELDS:
@@ -117,6 +120,13 @@ export const unitSelectionReducer = (s: UnitSelection, a: UnitSelectionAction): 
             if (!a.sourceState) throw Error('Attempt to copy state but no source state was provided.')
             return {
                 ...a.sourceState
+            }
+        case "REDISTRIBUTE_UNIT_COLORS":
+            redistributeUnitColors()
+            return {
+                ...s,
+                orderedUnitIds: [...s.orderedUnitIds], // trigger re-render
+                selectedUnitIds: new Set([...s.selectedUnitIds])
             }
         default: {
             throw Error(`Invalid mode for unit selection reducer: ${type}`)
@@ -150,6 +160,7 @@ export const useSelectedUnitIds = () => {
 
     return {
         selectedUnitIds: unitSelection.selectedUnitIds,
+        currentUnitId: unitSelection.currentUnitId,
         orderedUnitIds,
         allOrderedUnitIds: unitSelection.orderedUnitIds,
         visibleUnitIds: unitSelection.visibleUnitIds,

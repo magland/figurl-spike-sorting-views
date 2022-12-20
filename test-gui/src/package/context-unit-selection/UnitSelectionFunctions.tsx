@@ -12,7 +12,8 @@ export const selectUnique = (s: UnitSelection, a: UnitSelectionAction): UnitSele
     return {
         ...s,
         lastClickedId: targetUnit,
-        selectedUnitIds: new Set(s.selectedUnitIds.has(targetUnit) ? [] : [targetUnit])
+        selectedUnitIds: new Set(s.selectedUnitIds.has(targetUnit) ? [] : [targetUnit]),
+        currentUnitId: targetUnit
     }
 }
 
@@ -57,6 +58,7 @@ export const setSelectionExplicit = (s: UnitSelection, a: UnitSelectionAction): 
     // }
     return {
         ...s,
+        currentUnitId: (a.incomingSelectedUnitIds || [])[0],
         selectedUnitIds: new Set((a.incomingSelectedUnitIds ?? []))
     }
 }
@@ -72,10 +74,20 @@ export const allUnitSelectionState = (s: {selectedUnitIds: Set<number | string>,
 
 export const toggleSelectedUnit = (s: UnitSelection, a: UnitSelectionAction): UnitSelection => {
     if (a.targetUnit === undefined) throw new Error(`Attempt to toggle unit with unset unitid.`)
-    s.selectedUnitIds.has(a.targetUnit) ? s.selectedUnitIds.delete(a.targetUnit) : s.selectedUnitIds.add(a.targetUnit)
+    const newSelectedUnitIds = new Set([...s.selectedUnitIds])
+    newSelectedUnitIds.has(a.targetUnit) ? newSelectedUnitIds.delete(a.targetUnit) : newSelectedUnitIds.add(a.targetUnit)
+    let newCurrentUnitId = s.currentUnitId
+    if (a.targetUnit === s.currentUnitId) {
+        newCurrentUnitId = [...newSelectedUnitIds][0]
+    }
+    if ([...newSelectedUnitIds].length === 1) {
+        newCurrentUnitId = [...newSelectedUnitIds][0]
+    }
+
     return {
         ...s,
-        selectedUnitIds: new Set<number | string>(s.selectedUnitIds), // shallow copy, to trigger rerender
+        selectedUnitIds: newSelectedUnitIds, // shallow copy, to trigger rerender
+        currentUnitId: newCurrentUnitId,
         lastClickedId: a.targetUnit
     }
 }
@@ -95,10 +107,19 @@ export const toggleSelectedRange = (s: UnitSelection, a: UnitSelectionAction): U
         ? toggledIds.forEach(id => selectedUnitIds.delete(id))
         : toggledIds.forEach(id => selectedUnitIds.add(id))
 
+    if (s.currentUnitId) {
+        if (!selectedUnitIds.has(s.currentUnitId)) {
+            s.currentUnitId = [...selectedUnitIds][0]
+        }
+    }
+    else {
+        s.currentUnitId = [...selectedUnitIds][0]
+    }
     return {
         ...s,
         lastClickedId: targetUnit, // TODO: Check with client: should a range toggle update the last-selected-unit?
-        selectedUnitIds: new Set<number | string>(selectedUnitIds) // shallow copy to trigger rerender
+        selectedUnitIds: new Set<number | string>(selectedUnitIds), // shallow copy to trigger rerender
+        currentUnitId: s.currentUnitId
     }
 }
 
@@ -107,6 +128,14 @@ export const toggleSelectAll = (s: UnitSelection): UnitSelection => {
     const newSelection = selectionStatus === 'all' || selectionStatus === 'partial'
                             ? new Set<number>()
                             : new Set<number | string>(s.orderedUnitIds)
+    if (s.currentUnitId) {
+        if (!newSelection.has(s.currentUnitId)) {
+            s.currentUnitId = [...newSelection][0]
+        }
+    }
+    else {
+        s.currentUnitId = [...newSelection][0]
+    }
     return {
         ...s,
         selectedUnitIds: newSelection
