@@ -29,6 +29,7 @@ export type UnitSelectionAction = {
     newSortField?: string
     sortCallback?: SortingCallback
     sourceState?: UnitSelection
+    ascending?: boolean
 }
 
 export type UnitSelectionState = 'all' | 'none' | 'partial'

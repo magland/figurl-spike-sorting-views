@@ -15,6 +15,7 @@ export interface SortableTableWidgetColumn {
     sort: (a: any, b: any) => number
     dataElement: (d: any) => JSX.Element
     calculating?: boolean
+    onlyAllowDescendingSort?: boolean
 }
 
 export type RowsDict = Map<number | string, SortableTableWidgetRow>

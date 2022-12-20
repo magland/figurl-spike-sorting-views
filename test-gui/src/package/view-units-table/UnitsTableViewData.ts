@@ -1,5 +1,4 @@
-import { validateObject } from "@figurl/core-utils"
-import { isString, isArrayOf, isEqualTo, isNumber, isOneOf } from "@figurl/core-utils"
+import { isArrayOf, isEqualTo, isNumber, isOneOf, isString, optional, validateObject } from "@figurl/core-utils"
 
 type UTColumn = {
     key: string
@@ -31,12 +30,22 @@ export type UnitsTableViewData = {
     type: 'UnitsTable'
     columns: UTColumn[]
     rows: UTRow[]
+    similarityScores?: {
+        unitId1: number | string,
+        unitId2: number | string,
+        similarity: number
+    }[]
 }
 
 export const isUnitsTableViewData = (x: any): x is UnitsTableViewData => {
     return validateObject(x, {
         type: isEqualTo('UnitsTable'),
         columns: isArrayOf(isUTColumn),
-        rows: isArrayOf(isUTRow)
+        rows: isArrayOf(isUTRow),
+        similarityScores: optional(isArrayOf(y=> (validateObject(y, {
+            unitId1: isOneOf([isNumber, isString]),
+            unitId2: isOneOf([isNumber, isString]),
+            similarity: isNumber
+        })))),
     })
 }

@@ -49,6 +49,29 @@ const UnitsTableView: FunctionComponent<Props> = ({data, width, height}) => {
                 calculating: false
             })
         }
+        if (data.similarityScores) {
+            ret.push({
+                columnName: '_similarity',
+                label: 'Similarity',
+                tooltip: 'Similarity with current unit',
+                sort: (a: {score: number | undefined, unitId: number | string}, b: {score: number | undefined, unitId: number | string}) => {
+                    if (a.unitId === currentUnitId) return 1
+                    if (b.unitId === currentUnitId) return -1
+                    const s1 = a.score
+                    const s2 = b.score
+                    if ((s1 === undefined) && (s2 !== undefined)) return -1
+                    else if ((s1 !== undefined) && (s2 === undefined)) return 1
+                    else if ((s1 === undefined) && (s2 === undefined)) return 0
+                    else if ((s1 !== undefined) && (s2 !== undefined)) {
+                        return (s1 < s2 ? -1 : s1 > s2 ? 1 : 0)
+                    }
+                    else return 0
+                },
+                dataElement: (d: any) => (<span>{d}</span>),
+                calculating: false,
+                onlyAllowDescendingSort: true
+            })
+        }
         // The filter is rather hacky
         data.columns.filter(c => c.key !== 'unitId').forEach(c => {
             ret.push({
@@ -61,12 +84,25 @@ const UnitsTableView: FunctionComponent<Props> = ({data, width, height}) => {
             })
         })
         return ret
-    }, [data.columns, sortingCuration])
+    }, [data.columns, currentUnitId, sortingCuration, data.similarityScores])
 
     const rows = useMemo(() => {
         // depend on orderedUnitIds so we can trigger re-render when unit colors have been redistributed
         for (let i = 0; i < 0; i++) {
             orderedUnitIds.push('never-added')
+        }
+        const similarityScoresWithCurrentUnit: {[key: string | number]: number} = {}
+        if (data.similarityScores) {
+            if (currentUnitId !== undefined) {
+                for (let a of data.similarityScores) {
+                    if (a.unitId1 === currentUnitId) {
+                        similarityScoresWithCurrentUnit[a.unitId2] = a.similarity
+                    }
+                    else if (a.unitId2 === currentUnitId) {
+                        similarityScoresWithCurrentUnit[a.unitId1] = a.similarity
+                    }
+                }
+            }
         }
         return data.rows.map(r => {
             const curationLabels = ((sortingCuration?.labelsByUnit || {})[`${r.unitId}`] || [])
@@ -74,11 +110,19 @@ const UnitsTableView: FunctionComponent<Props> = ({data, width, height}) => {
                 value: {unitId: r.unitId, mergeGroup: mergeGroupForUnitId(r.unitId, sortingCuration)},
                 sortValue: r.unitId
             }
+            const similarityScore = similarityScoresWithCurrentUnit[r.unitId]
             const rowData: {[key: string]: any} = {
                 _unitId: unitIdData,
                 _labels: {
                     value: curationLabels,
                     sortValue: curationLabels.join(', ')
+                },
+                _similarity: {
+                    value: similarityScore !== undefined ? similarityScore.toFixed(3) : undefined,
+                    sortValue: {
+                        unitId: r.unitId,
+                        score: similarityScore
+                    }
                 }
             }
             for (let c of data.columns) {
@@ -95,7 +139,7 @@ const UnitsTableView: FunctionComponent<Props> = ({data, width, height}) => {
                 checkboxFn: checkboxClickHandlerGenerator(r.unitId)
             }
         })
-    }, [data.rows, data.columns, sortingCuration, checkboxClickHandlerGenerator, orderedUnitIds])
+    }, [data.rows, data.columns, currentUnitId, data.similarityScores, sortingCuration, checkboxClickHandlerGenerator, orderedUnitIds])
 
     useEffect(() => {
         unitIdSelectionDispatch({ type: INITIALIZE_UNITS, newUnitOrder: sortIds(rows.map(r => (r.rowId))) })

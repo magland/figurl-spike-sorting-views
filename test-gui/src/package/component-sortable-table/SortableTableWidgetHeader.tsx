@@ -93,9 +93,10 @@ const SortableTableWidgetHeaderRow: FunctionComponent<HeaderRowProps> = (props) 
         selectionDispatch({
             type: UPDATE_SORT_FIELDS,
             newSortField: columnName,
-            sortCallback: sortCallback
+            sortCallback: sortCallback,
+            ascending: columnsMap.get(columnName)?.onlyAllowDescendingSort ? false : undefined
         })
-    }, [selectionDispatch, sortCallback, selectionDisabled])
+    }, [selectionDispatch, sortCallback, selectionDisabled, columnsMap])
 
     const _renderedHeaders = useMemo(() => {
         return columnHeaders.map(column => {

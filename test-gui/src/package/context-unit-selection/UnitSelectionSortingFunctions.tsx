@@ -29,7 +29,7 @@ export const updateSort = (s: UnitSelection, a: UnitSelectionAction): UnitSelect
     const { sortRules } = s
     const { newSortField, sortCallback } = a
     if (newSortField === undefined || sortCallback === undefined) throw Error('Attempt to update sort fields with undefined field or callback.')
-    const newSortRules = addFieldToSortRules((sortRules || []), newSortField)
+    const newSortRules = addFieldToSortRules((sortRules || []), newSortField, a.ascending)
     const newOrder = sortCallback(newSortRules)
     const newVisibleUnits = getVisibleUnitsOnSortUpdate(s, newOrder)
     return {
@@ -41,12 +41,14 @@ export const updateSort = (s: UnitSelection, a: UnitSelectionAction): UnitSelect
     }
 }
 
-export const addFieldToSortRules = (rules: SortingRule[], newField: string): SortingRule[] => {
+export const addFieldToSortRules = (rules: SortingRule[], newField: string, ascending: boolean | undefined): SortingRule[] => {
     const lastItem = rules.pop()
     
-    const newItemAscending = lastItem?.columnName === newField
-        ? !lastItem.sortAscending
-        : true
+    const newItemAscending = ascending === undefined ? (
+        lastItem?.columnName === newField
+            ? !lastItem.sortAscending
+            : true
+    ) : ascending
     if (lastItem && lastItem.columnName !== newField){
         rules.push(lastItem)
     }
