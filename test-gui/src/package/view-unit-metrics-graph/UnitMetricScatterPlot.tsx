@@ -1,4 +1,4 @@
-import { ScatterPlot, ScatterPlotMarker } from '@figurl/core-views';
+import { ScatterPlot, ScatterPlotMarker } from '../component-scatter-plot';
 import { FunctionComponent, useCallback, useMemo } from "react";
 import { idToNum } from "..";
 import { getUnitColor } from "../view-units-table/unitColors";
@@ -7,14 +7,17 @@ import { UMGMetric, UMGUnit } from "./UnitMetricsGraphViewData";
 export type UnitMetricScatterPlotProps = {
     metric1: UMGMetric
     metric2: UMGMetric
+    metric1Range?: {min: number, max: number}
+    metric2Range?: {min: number, max: number}
     units: UMGUnit[]
     selectedUnitIds: Set<number | string>
     setSelectedUnitIds: (unitIds: (string | number)[]) => void
+    onZoomToRect?: (r: {x: number, y: number, width: number, height: number}) => void
     width: number
     height: number
 }
 
-const UnitMetricScatterPlot: FunctionComponent<UnitMetricScatterPlotProps> = ({metric1, metric2, units, selectedUnitIds, setSelectedUnitIds, width, height}) => {
+const UnitMetricScatterPlot: FunctionComponent<UnitMetricScatterPlotProps> = ({metric1, metric2, metric1Range, metric2Range, units, selectedUnitIds, setSelectedUnitIds, onZoomToRect, width, height}) => {
     const radius = 6
     const markers: ScatterPlotMarker[] = useMemo(() => {
         const ret: ScatterPlotMarker[] = []
@@ -35,12 +38,16 @@ const UnitMetricScatterPlot: FunctionComponent<UnitMetricScatterPlotProps> = ({m
         return ret
     }, [units, metric1, metric2, selectedUnitIds])
     const handleSelectRect = useCallback((r: {x: number, y: number, width: number, height: number}, selectedMarkerIds: (string | number)[], {ctrlKey, shiftKey}: {ctrlKey: boolean, shiftKey: boolean}) => {
+        if (shiftKey) {
+            onZoomToRect && onZoomToRect(r)
+            return
+        }
         let selectedIds = selectedMarkerIds
-        if ((ctrlKey) || (shiftKey)) {
+        if (ctrlKey) {
             selectedIds = [...new Set([...selectedMarkerIds, ...selectedUnitIds])]
         }
         setSelectedUnitIds(selectedIds)
-    }, [setSelectedUnitIds, selectedUnitIds])
+    }, [setSelectedUnitIds, selectedUnitIds, onZoomToRect])
     const handleClickPoint = useCallback((p: {x: number, y: number}, selectedMarkerKey: string | number | undefined, {ctrlKey, shiftKey}: {ctrlKey: boolean, shiftKey: boolean}) => {
         let selectedIds: (number | string)[]
         if ((ctrlKey) || (shiftKey)) {
@@ -66,6 +73,8 @@ const UnitMetricScatterPlot: FunctionComponent<UnitMetricScatterPlotProps> = ({m
             width={width}
             height={height}
             markers={markers}
+            xRange={metric1Range}
+            yRange={metric2Range}
             onSelectRect={handleSelectRect}
             onClickPoint={handleClickPoint}
         />

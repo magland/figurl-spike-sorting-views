@@ -1,3 +1,4 @@
+import { AffineTransform } from "../../../view-unit-similarity-matrix"
 import { PixelSpaceElectrode } from "./ElectrodeGeometry"
 
 export type ElectrodeColors = {
@@ -37,14 +38,21 @@ export type PaintProps = {
     layoutMode: 'geom' | 'vertical'
     colors?: ElectrodeColors
     xMargin: number
+    affineTransform?: AffineTransform
     // omitting hideElectrodes b/c what are we drawing if we don't draw electrodes??
 }
 
 const circle = 2 * Math.PI
 
 export const paint = (ctxt: CanvasRenderingContext2D, props: PaintProps) => {
-    const { layoutMode } = props
+    const { layoutMode, affineTransform } = props
+    ctxt.save()
+    if (affineTransform) {
+        const ff = affineTransform.forward
+        ctxt.transform(ff[0][0], ff[1][0], ff[0][1], ff[1][1], ff[0][2], ff[1][2])
+    }
     layoutMode === 'geom' ? paintGeometryView(ctxt, props) : paintVertical(ctxt, props)
+    ctxt.restore()
 }
 
 const paintVertical = (ctxt: CanvasRenderingContext2D, props: PaintProps) => {

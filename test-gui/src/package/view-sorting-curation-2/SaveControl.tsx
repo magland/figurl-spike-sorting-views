@@ -195,11 +195,11 @@ const SaveControl: FunctionComponent<Props> = ({fallbackUri, uri, setUri, object
 		return true
 	}, [uri, object, saveState, saving])
 
-	const saveAsNewJotEnabled = useMemo(() => {
-		if (saving) return false
-		if (!userId) return false
-		return true
-	}, [saving, userId])
+	// const saveAsNewJotEnabled = useMemo(() => {
+	// 	if (saving) return false
+	// 	if (!userId) return false
+	// 	return true
+	// }, [saving, userId])
 
 	useEffect(() => {
 		const listener = (e: BeforeUnloadEvent) => {
@@ -247,31 +247,27 @@ const SaveControl: FunctionComponent<Props> = ({fallbackUri, uri, setUri, object
 				{
 					uriStartsWithGithub && (
 						<span>
-							<Button disabled={!dirty} style={buttonStyle} onClick={() => handleSaveGithub()}>Save to Github</Button>
-							<br />
+							<Button disabled={!dirty} style={buttonStyle} onClick={() => handleSaveGithub()}>Save to GitHub</Button>
 						</span>
 					)
 				}
 				<Button style={buttonStyle} disabled={!saveSnapshotEnabled} onClick={handleSaveSnapshot}>Save as snapshot (sha1://)</Button>
-				<br />
-				{
+				{/* {
 					!uriStartsWithJot && (
 						<span>
 							<Button style={buttonStyle} disabled={!saveAsNewJotEnabled} onClick={() => handleSaveJot({new: true})}>Save as new jot (jot://)</Button>
 							<br />
 						</span>
 					)
-				}
+				} */}
 				{
-					!uriStartsWithGithub && (
-						!editingGithubUri ? (
-							<span>
-								<Button style={buttonStyle} onClick={() => setEditingGithubUri(true)}>Save to Github as...</Button>
-								<br />
-							</span>
-						) : (
-							<EditGithubUriControl onSubmit={uri => {handleSaveGithubAs(uri)}} onCancel={() => setEditingGithubUri(false)} />
-						)
+					!editingGithubUri ? (
+						<span>
+							<Button style={buttonStyle} onClick={() => setEditingGithubUri(true)}>Save to Github as...</Button>
+							<br />
+						</span>
+					) : (
+						<EditGithubUriControl onSubmit={uri => {handleSaveGithubAs(uri)}} onCancel={() => setEditingGithubUri(false)} />
 					)
 				}
 				<span>

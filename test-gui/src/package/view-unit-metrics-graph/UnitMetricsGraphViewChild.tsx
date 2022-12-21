@@ -1,12 +1,9 @@
-import { useUnitMetricSelection } from '../context-unit-metrics-selection';
-import { PGPlot, PlotGrid } from '@figurl/core-views';
-import { Splitter } from '@figurl/core-views';
-import { idToNum, INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '..';
-import { VerticalScrollView } from '@figurl/core-views';
-import { ToolbarItem, ViewToolbar } from '../ViewToolbar';
+import { PGPlot, PlotGrid, Splitter, VerticalScrollView } from '@figurl/core-views';
 import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
-import { determinePlotSizeForSquareMatrixGrid } from '..';
+import { determinePlotSizeForSquareMatrixGrid, idToNum, INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '..';
+import { useUnitMetricSelection } from '../context-unit-metrics-selection';
+import { ToolbarItem, ViewToolbar } from '../ViewToolbar';
 import UnitMetricPlot, { UnitMetricPlotProps } from './UnitMetricPlot';
 import { UMGMetric, UnitMetricsGraphViewData } from './UnitMetricsGraphViewData';
 
@@ -16,12 +13,15 @@ type Props = {
     height: number
 }
 
+type MetricRanges = {[key: string]: {min: number, max: number} | undefined}
+
 const UnitMetricsGraphViewChild: FunctionComponent<Props> = ({data, width, height}) => {
     const {units, metrics} = data
     const {selectedUnitIds, unitIdSelectionDispatch} = useSelectedUnitIds()
     const {selectedUnitMetrics} = useUnitMetricSelection()
     const [plotBoxScaleFactor, setPlotBoxScaleFactor] = useState<number>(1)
     const [numHistogramBins, setNumHistogramBins] = useState<number>(10)
+    const [metricRanges, setMetricRanges] = useState<MetricRanges>({})
 
     const unitsSorted = useMemo(() => (
         units.sort((u1, u2) => {
@@ -78,10 +78,18 @@ const UnitMetricsGraphViewChild: FunctionComponent<Props> = ({data, width, heigh
                 icon: <FaMinus />
             }
         ]
+        const resetZoomAction = {
+            type: 'button',
+            callback: () => setMetricRanges({}),
+            title: 'Reset zoom',
+            text: 'RZ'
+        }
         return [
             ...(boxSizeActions),
             {type: 'divider'},
-            ...numBinsActions
+            ...numBinsActions,
+            {type: 'divider'},
+            resetZoomAction
         ]
     }, [selectedUnitMetrics.length])
 
@@ -100,12 +108,20 @@ const UnitMetricsGraphViewChild: FunctionComponent<Props> = ({data, width, heigh
                     type: 'histogram',
                     metric1: metric,
                     metric2: metric,
+                    metric1Range: metricRanges[metric.key],
+                    metric2Range: metricRanges[metric.key],
                     units: unitsSorted,
                     width: 400 * plotBoxScaleFactor,
                     height: 400 * plotBoxScaleFactor,
                     numHistogramBins,
                     selectedUnitIds,
-                    setSelectedUnitIds
+                    setSelectedUnitIds,
+                    onZoomToRect: (r: {x: number, y: number, width: number, height: number}) => {
+                        setMetricRanges({
+                            ...metricRanges,
+                            [metric.key]: {min: r.x, max: r.x + r.width}
+                        })
+                    }
                 }
                 const ret: PGPlot = {
                     key: metric.key,
@@ -152,12 +168,29 @@ const UnitMetricsGraphViewChild: FunctionComponent<Props> = ({data, width, heigh
                             type: m1 === m2 ? 'histogram': 'scatter',
                             metric1: metric2,
                             metric2: metric1,
+                            metric1Range: metricRanges[metric2.key],
+                            metric2Range: metricRanges[metric1.key],
                             units: unitsSorted,
                             numHistogramBins,
                             width: plotWidth,
                             height: plotHeight,
                             selectedUnitIds,
-                            setSelectedUnitIds
+                            setSelectedUnitIds,
+                            onZoomToRect: (r: {x: number, y: number, width: number, height: number}) => {
+                                if (m1 !== m2) {
+                                    setMetricRanges({
+                                        ...metricRanges,
+                                        [metric2.key]: {min: r.x, max: r.x + r.width},
+                                        [metric1.key]: {min: r.y, max: r.y + r.height}
+                                    })
+                                }
+                                else {
+                                    setMetricRanges({
+                                        ...metricRanges,
+                                        [metric1.key]: {min: r.x, max: r.x + r.width},
+                                    })
+                                }
+                            }
                         }
                         ret.push({
                             key: `${m2}-${m1}`,
@@ -216,7 +249,7 @@ const UnitMetricsGraphViewChild: FunctionComponent<Props> = ({data, width, heigh
             }
             return ret
         }
-    }, [metrics, selectedUnitIds, unitsSorted, plotBoxScaleFactor, selectedUnitMetrics, numHistogramBins, width, height, unitIdSelectionDispatch])
+    }, [metrics, selectedUnitIds, unitsSorted, plotBoxScaleFactor, selectedUnitMetrics, numHistogramBins, width, height, unitIdSelectionDispatch, metricRanges])
 
     return (
         <div>

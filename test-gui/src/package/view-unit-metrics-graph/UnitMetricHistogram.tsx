@@ -1,21 +1,23 @@
-import { BarPlot, BarPlotBar, BarPlotTick, BarPlotVerticalLine } from "@figurl/core-views";
 import { FunctionComponent, useCallback, useMemo } from "react";
 import { idToNum } from "..";
+import { BarPlot, BarPlotBar, BarPlotTick, BarPlotVerticalLine } from "../component-bar-plot";
 import { getUnitColor } from "../view-units-table/unitColors";
 import determineTickLocationsMsec from "./determineTickLocationsMsec";
 import { UMGMetric, UMGUnit } from "./UnitMetricsGraphViewData";
 
 export type UnitMetricHistogramProps = {
     metric: UMGMetric
+    metricRange?: {min: number, max: number}
     units: UMGUnit[]
     selectedUnitIds: Set<number | string>
     setSelectedUnitIds: (unitIds: (string | number)[]) => void
     numBins?: number
+    onZoomToRect?: (r: {x: number, y: number, width: number, height: number}) => void
     width: number
     height: number
 }
 
-const UnitMetricHistogram: FunctionComponent<UnitMetricHistogramProps> = ({metric, units, selectedUnitIds, setSelectedUnitIds, numBins, width, height}) => {
+const UnitMetricHistogram: FunctionComponent<UnitMetricHistogramProps> = ({metric, metricRange, units, selectedUnitIds, setSelectedUnitIds, numBins, onZoomToRect, width, height}) => {
     const {bars, ticks, verticalLines} = useMemo(() => {
         const values = units.map(unit => (unit.values[metric.key])).filter(a => (a !== undefined)).map(a => (a as number))
         const valuesSelected = units.filter(u => (selectedUnitIds.has(u.unitId))).map(unit => (unit.values[metric.key])).filter(a => (a !== undefined)).map(a => (a as number))
@@ -23,7 +25,11 @@ const UnitMetricHistogram: FunctionComponent<UnitMetricHistogramProps> = ({metri
         const colorsSelected = unitIdsSelected.map(u => (getUnitColor(idToNum(u))))
         return createHistogramBars(values, valuesSelected, colorsSelected, numBins || 10)
     }, [units, metric, selectedUnitIds, numBins])
-    const handleSelectRect = useCallback((r: {x: number, y: number, width: number, height: number}, selectedBarKeys: (string | number)[], {ctrlKey, shiftKey}: {ctrlKey: boolean, shiftKey: boolean}) => {
+    const handleSelectRect = useCallback((r: {x: number, y: number, width: number, height: number}, selectedBarKeys: (string | number)[], {ctrlKey, shiftKey, xMin, xMax}: {ctrlKey: boolean, shiftKey: boolean, xMin: number, xMax: number}) => {
+        if (shiftKey) {
+            onZoomToRect && onZoomToRect({x: xMin, y: r.y, width: xMax - xMin, height: r.height})
+            return
+        }
         if (selectedBarKeys.length === 0) return
         const selectedBars: BarPlotBar[] = []
         for (let i of selectedBarKeys) {
@@ -47,12 +53,13 @@ const UnitMetricHistogram: FunctionComponent<UnitMetricHistogramProps> = ({metri
         else {
             setSelectedUnitIds(ids)
         }
-    }, [bars, metric, selectedUnitIds, setSelectedUnitIds, units])
+    }, [bars, metric, selectedUnitIds, setSelectedUnitIds, units, onZoomToRect])
     return (
         <BarPlot
             width={width}
             height={height}
             bars={bars}
+            range={metricRange}
             ticks={ticks}
             verticalLines={verticalLines}
             onSelectRect={handleSelectRect}

@@ -2,6 +2,7 @@ import { BaseCanvas } from '@figurl/core-views'
 import { TransformationMatrix, transformPoints, Vec2 } from '@figurl/core-views'
 import { matrix } from "mathjs"
 import { useMemo } from 'react'
+import { AffineTransform } from '../../view-unit-similarity-matrix'
 import { LayoutMode, PixelSpaceElectrode } from './sharedDrawnComponents/ElectrodeGeometry'
 
 
@@ -32,6 +33,7 @@ export type WaveformProps = {
     width: number
     height: number
     layoutMode?: LayoutMode
+    affineTransform?: AffineTransform
 }
 
 type PixelSpacePath = {
@@ -46,6 +48,7 @@ type PaintProps = {
     pixelSpacePathsLower?: PixelSpacePath[]
     pixelSpacePathsUpper?: PixelSpacePath[]
     xMargin: number
+    affineTransform?: AffineTransform
 }
 
 const computePaths = (
@@ -96,11 +99,18 @@ const computePaths = (
 }
 
 const paint = (ctxt: CanvasRenderingContext2D, props: PaintProps) => {
-    const { pixelSpacePaths, pixelSpacePathsLower, pixelSpacePathsUpper, xMargin, waveformWidth } = props
+    const { pixelSpacePaths, pixelSpacePathsLower, pixelSpacePathsUpper, xMargin, waveformWidth, affineTransform } = props
     if (!pixelSpacePaths || pixelSpacePaths.length === 0) return
 
     ctxt.resetTransform()
     ctxt.clearRect(0, 0, ctxt.canvas.width, ctxt.canvas.height)
+    
+    ctxt.save()
+    if (affineTransform) {
+        const ff = affineTransform.forward
+		ctxt.transform(ff[0][0], ff[1][0], ff[0][1], ff[1][1], ff[0][2], ff[1][2])
+    }
+
     ctxt.translate(xMargin, 0)
     // ctxt.scale(1, yScale) // This would be a neat native way to adjust the vertical scaling, BUT it changes the pen aspect ratio.
     // So it doesn't work, alas. Leaving this comment here as a warning to future generations.
@@ -141,12 +151,13 @@ const paint = (ctxt: CanvasRenderingContext2D, props: PaintProps) => {
         ctxt.stroke()
         ctxt.setTransform(baseTransform)
     })
+    ctxt.restore()
     // Might be a good idea to do another ctxt.resetTransform() here to clear out any junk state
 }
 
 
 const WaveformPlot = (props: WaveformProps) => {
-    const { electrodes, waveforms, oneElectrodeHeight, oneElectrodeWidth, yScale, width, height, layoutMode, waveformWidth } = props
+    const { electrodes, waveforms, oneElectrodeHeight, oneElectrodeWidth, yScale, width, height, layoutMode, waveformWidth, affineTransform } = props
 
     const canvas = useMemo(() => {
         const pointsPerWaveform = waveforms.length > 0 ? waveforms[0].waveform.length > 0 ? waveforms[0].waveform[0].length : 0 : 0 // assumed constant across all
@@ -170,7 +181,8 @@ const WaveformPlot = (props: WaveformProps) => {
             pixelSpacePathsLower: pathsLower,
             pixelSpacePathsUpper: pathsUpper,
             xMargin: xMargin,
-            waveformWidth
+            waveformWidth,
+            affineTransform
         }
 
         return <BaseCanvas<PaintProps>
@@ -179,7 +191,7 @@ const WaveformPlot = (props: WaveformProps) => {
             draw={paint}
             drawData={paintProps}
         />
-    }, [waveforms, electrodes, yScale, width, height, oneElectrodeWidth, oneElectrodeHeight, layoutMode, waveformWidth])
+    }, [waveforms, electrodes, yScale, width, height, oneElectrodeWidth, oneElectrodeHeight, layoutMode, waveformWidth, affineTransform])
 
     return canvas
 }

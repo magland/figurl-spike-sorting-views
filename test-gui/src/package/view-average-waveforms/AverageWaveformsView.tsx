@@ -179,6 +179,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
 
     const handleWheel = useCallback((e: React.WheelEvent) => {
         if (!e.shiftKey) return
+        if (e.altKey) return
         if (e.deltaY < 0) {
             setAmpScaleFactor(s => (s * 1.3))
         }

@@ -2,7 +2,7 @@ import { BaseCanvas } from '@figurl/core-views'
 import { DragCanvas, DragAction, handleMouseDownIfDragging, handleMouseMoveIfDragging, handleMouseUpIfDragging } from '@figurl/core-views'
 import { Vec2 } from '@figurl/core-views'
 import { useSelectedElectrodes } from '@figurl/timeseries-views'
-import { applyAffineTransform, applyAffineTransformInv, detAffineTransform, useWheelZoom } from '../../../view-unit-similarity-matrix'
+import { AffineTransform, applyAffineTransform, applyAffineTransformInv, detAffineTransform, useWheelZoom } from '../../../view-unit-similarity-matrix'
 import React, { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
 import { defaultColors, ElectrodeColors, paint } from './electrodeGeometryPainting'
 import { ElectrodeGeometryActionType, electrodeGeometryReducer } from './electrodeGeometryStateManagement'
@@ -38,6 +38,7 @@ interface WidgetProps {
     offsetLabels?: boolean
     disableSelection?: boolean
     disableAutoRotate?: boolean
+    affineTransform?: AffineTransform
 }
 
 const defaultElectrodeLayerProps = {
@@ -53,7 +54,7 @@ const getEventPoint = (e: React.MouseEvent) => {
 }
 
 const ElectrodeGeometry = (props: WidgetProps) => {
-    const { width, height, electrodes, disableAutoRotate } = props
+    const { width, height, electrodes, disableAutoRotate, affineTransform } = props
     const { selectedElectrodeIds, setSelectedElectrodeIds } = useSelectedElectrodes()
     const disableSelection = props.disableSelection ?? false
     const offsetLabels = props.offsetLabels ?? false
@@ -68,10 +69,10 @@ const ElectrodeGeometry = (props: WidgetProps) => {
                                                 dragState: {isActive: false},
                                                 xMarginWidth: -1
                                             })
-    const {affineTransform, handleWheel} = useWheelZoom(width, height)
+    const {affineTransform: affineTransform2, handleWheel} = useWheelZoom(width, height, {shift: true, alt: false})
     const state2 = useMemo(() => {
         const convertedElectrodes = state.convertedElectrodes.map(e => {
-            const pt = applyAffineTransform(affineTransform, {x: e.pixelX, y: e.pixelY})
+            const pt = applyAffineTransform(affineTransform2, {x: e.pixelX, y: e.pixelY})
             return {
                 ...e,
                 pixelX: pt.x,
@@ -81,15 +82,15 @@ const ElectrodeGeometry = (props: WidgetProps) => {
         return {
             ...state,
             convertedElectrodes,
-            pixelRadius: state.pixelRadius * Math.sqrt(detAffineTransform(affineTransform))
+            pixelRadius: state.pixelRadius * Math.sqrt(detAffineTransform(affineTransform2))
         }
-    }, [affineTransform, state])
+    }, [affineTransform2, state])
 
     const getEventPointWithAffineTransform = useMemo(() => ((e: React.MouseEvent): Vec2 => {
         const point = getEventPoint(e)
-        const point2 = applyAffineTransformInv(affineTransform, {x: point[0], y: point[1]})
+        const point2 = applyAffineTransformInv(affineTransform2, {x: point[0], y: point[1]})
         return [point2.x, point2.y]
-    }), [affineTransform])
+    }), [affineTransform2])
 
     useEffect(() => {
         const type: ElectrodeGeometryActionType = 'INITIALIZE'
@@ -159,7 +160,8 @@ const ElectrodeGeometry = (props: WidgetProps) => {
             offsetLabels: offsetLabels,
             layoutMode: props.layoutMode ?? 'geom',
             xMargin: state.xMarginWidth,
-            colors: colors
+            colors: colors,
+            affineTransform
         }
         return <BaseCanvas 
             width={width}
@@ -167,7 +169,7 @@ const ElectrodeGeometry = (props: WidgetProps) => {
             draw={paint}
             drawData={data}
         />
-    }, [width, height, state2.convertedElectrodes, selectedElectrodeIds, state.hoveredElectrodeId, state.draggedElectrodeIds, state2.pixelRadius, props.showLabels, offsetLabels, props.layoutMode, state.xMarginWidth, colors])
+    }, [width, height, state2.convertedElectrodes, selectedElectrodeIds, state.hoveredElectrodeId, state.draggedElectrodeIds, state2.pixelRadius, props.showLabels, offsetLabels, props.layoutMode, state.xMarginWidth, colors, affineTransform])
 
     const svg = useMemo(() => {
         return USE_SVG && <SvgElectrodeLayout 

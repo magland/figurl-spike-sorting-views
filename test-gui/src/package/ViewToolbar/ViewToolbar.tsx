@@ -19,6 +19,7 @@ type ToolbarElement = {
     title: string
     onClick?: () => void
     icon?: any
+    text?: string
     selected: boolean
     disabled?: boolean
     content?: string | number
@@ -33,16 +34,27 @@ const ToolbarButton: FunctionComponent<ToolbarElement> = (props: ToolbarElement)
     const color = props.selected ? 'secondary' : 'inherit'
     return (
         <span title={props.title} key={props.elementIndex + '-span'}>
-            <IconButton
-                title={props.title}
-                onClick={props.onClick}
-                key={props.elementIndex}
-                color={color}
-                style={iconButtonStyle}
-                disabled={props.disabled ? true : false}
-            >
-                {props.icon}
-            </IconButton>
+            {
+                props.icon ? (
+                    <IconButton
+                        title={props.title}
+                        onClick={props.onClick}
+                        key={props.elementIndex}
+                        color={color}
+                        style={iconButtonStyle}
+                        disabled={props.disabled ? true : false}
+                    >
+                        {props.icon}
+                    </IconButton>
+                ) : (
+                    <button
+                        title={props.title}
+                        onClick={props.onClick}
+                        key={props.elementIndex}
+                        disabled={props.disabled ? true : false}
+                    >{props.text}</button>
+                )
+            }
         </span>
     )
 }
@@ -141,6 +153,7 @@ const rectifyElements = (elements?: any[] | null): ToolbarElement[] => {
         title: e.title,
         onClick: e.callback,
         icon: e.icon || '',
+        text: e.text || '',
         selected: e.selected,
         disabled: e.disabled,
         content: e.content,

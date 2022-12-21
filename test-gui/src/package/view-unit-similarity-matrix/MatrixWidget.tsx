@@ -14,10 +14,15 @@ type Props = {
     height: number
 }
 
-export const useWheelZoom = (width: number, height: number) => {
+export const useWheelZoom = (width: number, height: number, o: {shift?: boolean, alt?: boolean}={}) => {
+    const shift = o.shift !== undefined ? o.shift : true
+    const alt = o.shift !== undefined ? o.alt : false
     const [affineTransform, setAffineTransform] = useState<AffineTransform>(identityAffineTransform)
     const handleWheel = useCallback((e: React.WheelEvent) => {
-        if (!e.shiftKey) return
+        if ((shift) && (!e.shiftKey)) return
+        if ((!shift) && (e.shiftKey)) return
+        if ((alt) && (!e.altKey)) return
+        if ((!alt) && (e.altKey)) return
         const boundingRect = e.currentTarget.getBoundingClientRect()
         const point = {x: e.clientX - boundingRect.x, y: e.clientY - boundingRect.y}
         const deltaY = e.deltaY
@@ -42,7 +47,7 @@ export const useWheelZoom = (width: number, height: number) => {
 
         setAffineTransform(newTransform)
         return false
-    }, [affineTransform, height, width])
+    }, [affineTransform, height, width, shift, alt])
     return {
         affineTransform,
         handleWheel
@@ -61,7 +66,7 @@ const MatrixWidget: FunctionComponent<Props> = ({unitIds1, unitIds2, selectedUni
     const size = Math.min(width, height)
     const offsetX = (width - size) / 2
     const offsetY = (height - size) / 2
-    const {affineTransform, handleWheel} = useWheelZoom(width, height)
+    const {affineTransform, handleWheel} = useWheelZoom(width, height, {shift: true, alt: false})
     const indToPixel = useMemo(() => (o: {i1: number, i2: number}) => (
         applyAffineTransform(affineTransform, {
             x: offsetX + o.i1 / unitIds1.length * size,

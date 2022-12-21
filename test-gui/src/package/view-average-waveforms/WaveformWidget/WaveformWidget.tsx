@@ -1,4 +1,5 @@
 import { FunctionComponent, useMemo } from 'react'
+import { useWheelZoom } from '../../view-unit-similarity-matrix'
 import ElectrodeGeometry, { Electrode, LayoutMode } from './sharedDrawnComponents/ElectrodeGeometry'
 import { computeElectrodeLocations, xMargin as xMarginDefault } from './sharedDrawnComponents/electrodeGeometryLayout'
 import { ElectrodeColors } from './sharedDrawnComponents/electrodeGeometryPainting'
@@ -68,6 +69,8 @@ const WaveformWidget: FunctionComponent<WaveformWidgetProps> = (props) => {
 
     const maxElectrodePixelRadius = 1000
 
+    const {handleWheel, affineTransform} = useWheelZoom(width, height, {shift: true, alt: true})
+
     const geometry = useMemo(() => <ElectrodeGeometry
         electrodes={electrodes}
         width={width}
@@ -80,7 +83,8 @@ const WaveformWidget: FunctionComponent<WaveformWidgetProps> = (props) => {
         maxElectrodePixelRadius={maxElectrodePixelRadius}
         disableSelection={true}      // ??
         disableAutoRotate={disableAutoRotate}
-    />, [electrodes, width, height, layoutMode, colors, showChannelIds, disableAutoRotate])
+        affineTransform={affineTransform}
+    />, [electrodes, width, height, layoutMode, colors, showChannelIds, disableAutoRotate, affineTransform])
 
     // TODO: Don't do this twice, work it out differently
     const { convertedElectrodes, pixelRadius, xMargin: xMarginBase } = computeElectrodeLocations(width, height, electrodes, layoutMode, maxElectrodePixelRadius, {disableAutoRotate})
@@ -103,10 +107,11 @@ const WaveformWidget: FunctionComponent<WaveformWidgetProps> = (props) => {
         height={height}
         layoutMode={layoutMode}
         waveformWidth={waveformWidth}
+        affineTransform={affineTransform}
     />
 
     return (
-        <div style={{width, height, position: 'relative'}}>
+        <div style={{width, height, position: 'relative'}} onWheel={handleWheel}>
             {geometry}
             {waveformPlot}
         </div>

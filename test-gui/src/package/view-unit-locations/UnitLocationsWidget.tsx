@@ -56,7 +56,7 @@ const UnitLocationsWidget = (props: WidgetProps) => {
     const { width, height, electrodes, units, disableAutoRotate, onlyShowSelected } = props
     const { selectedElectrodeIds } = useSelectedElectrodes()
     const { selectedUnitIds, unitIdSelectionDispatch } = useSelectedUnitIds()
-    const {affineTransform, handleWheel} = useWheelZoom(width, height)
+    const {affineTransform, handleWheel} = useWheelZoom(width, height, {shift: true, alt: false})
 
     const selectedUnitIdsSet = useMemo(() => (new Set([...selectedUnitIds])), [selectedUnitIds])
 

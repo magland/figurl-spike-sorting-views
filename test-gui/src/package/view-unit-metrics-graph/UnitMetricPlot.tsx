@@ -7,24 +7,29 @@ export type UnitMetricPlotProps = {
     type: 'histogram' | 'scatter' | 'bottom-label' | 'left-label'
     metric1?: UMGMetric
     metric2?: UMGMetric
+    metric1Range?: {min: number, max: number}
+    metric2Range?: {min: number, max: number}
     units: UMGUnit[]
     selectedUnitIds: Set<number | string>
     setSelectedUnitIds: (unitIds: (string | number)[]) => void
     numHistogramBins?: number
+    onZoomToRect?: (r: {x: number, y: number, width: number, height: number}) => void
     width: number
     height: number
 }
 
-const UnitMetricPlot: FunctionComponent<UnitMetricPlotProps> = ({type, metric1, metric2, units, selectedUnitIds, setSelectedUnitIds, numHistogramBins, width, height}) => {
+const UnitMetricPlot: FunctionComponent<UnitMetricPlotProps> = ({type, metric1, metric2, metric1Range, metric2Range, units, selectedUnitIds, setSelectedUnitIds, numHistogramBins, onZoomToRect, width, height}) => {
     if (type === 'histogram') {
         if (!metric1) throw Error('Unexpected: metric1 not defined')
         return (
             <UnitMetricHistogram
                 metric={metric1}
+                metricRange={metric1Range}
                 units={units}
                 selectedUnitIds={selectedUnitIds}
                 setSelectedUnitIds={setSelectedUnitIds}
                 numBins={numHistogramBins}
+                onZoomToRect={onZoomToRect}
                 width={width}
                 height={height}
             />
@@ -37,9 +42,12 @@ const UnitMetricPlot: FunctionComponent<UnitMetricPlotProps> = ({type, metric1, 
             <UnitMetricScatterPlot
                 metric1={metric1}
                 metric2={metric2}
+                metric1Range={metric1Range}
+                metric2Range={metric2Range}
                 units={units}
                 selectedUnitIds={selectedUnitIds}
                 setSelectedUnitIds={setSelectedUnitIds}
+                onZoomToRect={onZoomToRect}
                 width={width}
                 height={height}
             />
