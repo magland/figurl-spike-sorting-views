@@ -1262,10 +1262,10 @@
     path "npm:path-browserify"
     stream "npm:stream-browserify"
 
-"@figurl/timeseries-views@^0.1":
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/@figurl/timeseries-views/-/timeseries-views-0.1.11.tgz#4426bc618361612572803534ba24ab1f5140b208"
-  integrity sha512-pgDoYO+pdLWUTxd5544Qo9V6I1raNmMTaMS12pg7MBAWF6JVHxLn4iczxi7BXrmrSgGxMki7AWxOzXUfJQsbgQ==
+"@figurl/timeseries-views@^0.2":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@figurl/timeseries-views/-/timeseries-views-0.2.0.tgz#86d1fb3ea602d919798c738059267b641308983d"
+  integrity sha512-2COGl8fv2g8Rp6vm9NThSIA/TdvKi8+qeXFoCBbeCCEfa60wKi+La0MVidiubQIIB8wCb9PhmNP+93JpUtUGHw==
   dependencies:
     "@figurl/core-views" "^0.1"
     "@figurl/interface" "^0.1"

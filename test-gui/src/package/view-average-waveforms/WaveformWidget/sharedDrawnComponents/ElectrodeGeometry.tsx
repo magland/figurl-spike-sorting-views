@@ -65,7 +65,7 @@ const ElectrodeGeometry = (props: WidgetProps) => {
                                                 convertedElectrodes: [],
                                                 pixelRadius: -1,
                                                 draggedElectrodeIds: [],
-                                                pendingSelectedElectrodeIds: selectedElectrodeIds,
+                                                pendingSelectedElectrodeIds: selectedElectrodeIds || [],
                                                 dragState: {isActive: false},
                                                 xMarginWidth: -1
                                             })
@@ -144,7 +144,7 @@ const ElectrodeGeometry = (props: WidgetProps) => {
                 point: point,
                 shift: e.shiftKey,
                 ctrl: e.ctrlKey,
-                selectedElectrodeIds: selectedElectrodeIds
+                selectedElectrodeIds: selectedElectrodeIds || []
             })
         }
     }, [state.dragState.isActive, selectedElectrodeIds, getEventPointWithAffineTransform])
@@ -152,7 +152,7 @@ const ElectrodeGeometry = (props: WidgetProps) => {
     const canvas = useMemo(() => {
         const data = {
             pixelElectrodes: state2.convertedElectrodes,
-            selectedElectrodeIds: selectedElectrodeIds,
+            selectedElectrodeIds: selectedElectrodeIds || [],
             hoveredElectrodeId: state.hoveredElectrodeId,
             draggedElectrodeIds: state.draggedElectrodeIds,
             pixelRadius: state2.pixelRadius,
@@ -174,7 +174,7 @@ const ElectrodeGeometry = (props: WidgetProps) => {
     const svg = useMemo(() => {
         return USE_SVG && <SvgElectrodeLayout 
             pixelElectrodes={state.convertedElectrodes}
-            selectedElectrodeIds={selectedElectrodeIds}
+            selectedElectrodeIds={selectedElectrodeIds || []}
             hoveredElectrodeId={state.hoveredElectrodeId}
             draggedElectrodeIds={state.draggedElectrodeIds}
             pixelRadius={state.pixelRadius}

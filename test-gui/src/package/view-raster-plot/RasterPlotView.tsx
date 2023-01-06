@@ -1,4 +1,4 @@
-import { DefaultToolbarWidth, TimeScrollView, usePanelDimensions, useRecordingSelectionTimeInitialization, useTimeRange, useTimeseriesMargins } from '@figurl/timeseries-views'
+import { DefaultToolbarWidth, TimeScrollView, usePanelDimensions, useTimeseriesSelectionInitialization, useTimeRange, useTimeseriesMargins } from '@figurl/timeseries-views'
 import { FunctionComponent, useCallback, useMemo } from 'react'
 import { useSelectedUnitIds } from '..'
 import { idToNum } from '../context-unit-selection'
@@ -29,8 +29,8 @@ const panelSpacing = 4
 const RasterPlotView: FunctionComponent<Props> = ({data, timeseriesLayoutOpts, width, height}) => {
     const {selectedUnitIds} = useSelectedUnitIds()
 
-    useRecordingSelectionTimeInitialization(data.startTimeSec, data.endTimeSec)
-    const { visibleTimeStartSeconds, visibleTimeEndSeconds } = useTimeRange()
+    useTimeseriesSelectionInitialization(data.startTimeSec, data.endTimeSec)
+    const { visibleStartTimeSec, visibleEndTimeSec } = useTimeRange()
 
     const margins = useTimeseriesMargins(timeseriesLayoutOpts)
 
@@ -53,12 +53,12 @@ const RasterPlotView: FunctionComponent<Props> = ({data, timeseriesLayoutOpts, w
         context.stroke()
     }, [panelHeight])
 
-    const timeToPixelMatrix = use1dScalingMatrix(panelWidth, visibleTimeStartSeconds, visibleTimeEndSeconds)
+    const timeToPixelMatrix = use1dScalingMatrix(panelWidth, visibleStartTimeSec, visibleEndTimeSec)
 
     const maxPointsPerUnit = 3000
 
     const pixelPanels = useMemo(() => (data.plots.sort((p1, p2) => (idToNum(p1.unitId) - idToNum(p2.unitId))).map(plot => {
-        const filteredSpikes = plot.spikeTimesSec.filter(t => (visibleTimeStartSeconds !== undefined) && (visibleTimeStartSeconds <= t) && (visibleTimeEndSeconds !== undefined) && (t <= visibleTimeEndSeconds))
+        const filteredSpikes = plot.spikeTimesSec.filter(t => (visibleStartTimeSec !== undefined) && (visibleStartTimeSec <= t) && (visibleEndTimeSec !== undefined) && (t <= visibleEndTimeSec))
         const pixelSpikes = subsampleIfNeeded(convert1dDataSeries(filteredSpikes, timeToPixelMatrix), maxPointsPerUnit)
 
         return {
@@ -70,9 +70,9 @@ const RasterPlotView: FunctionComponent<Props> = ({data, timeseriesLayoutOpts, w
             },
             paint: paintPanel
         }
-    })), [data.plots, visibleTimeStartSeconds, visibleTimeEndSeconds, timeToPixelMatrix, paintPanel])
+    })), [data.plots, visibleStartTimeSec, visibleEndTimeSec, timeToPixelMatrix, paintPanel])
 
-    return visibleTimeStartSeconds === undefined
+    return visibleStartTimeSec === undefined
     ? (<div>Loading...</div>)
     : (
         <TimeScrollView

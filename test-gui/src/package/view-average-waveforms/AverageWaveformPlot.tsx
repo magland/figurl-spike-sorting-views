@@ -1,6 +1,6 @@
-import { RecordingSelectionContext, useRecordingSelection } from '@figurl/timeseries-views';
+import { TimeseriesSelectionContext } from '@figurl/timeseries-views';
 import { idToNum } from '..';
-import { FunctionComponent, useMemo } from 'react';
+import { FunctionComponent, useContext, useMemo } from 'react';
 import ElectrodeGeometry from './WaveformWidget/sharedDrawnComponents/ElectrodeGeometry';
 import { WaveformColors } from './WaveformWidget/WaveformPlot';
 import WaveformWidget from './WaveformWidget/WaveformWidget';
@@ -82,23 +82,23 @@ const AverageWaveformPlot: FunctionComponent<AverageWaveformPlotProps> = ({allCh
         />
     )
 
-    const {recordingSelection} = useRecordingSelection()
+    const {timeseriesSelection} = useContext(TimeseriesSelectionContext)
 
-    const recordingSelectionProviderValue = useMemo(() => (
-        {recordingSelection: {...recordingSelection, selectedElectrodeIds: channelIds}, recordingSelectionDispatch: () => {}}
-    ), [recordingSelection, channelIds])
+    const timeseriesSelectionProviderValue = useMemo(() => (
+        {timeseriesSelection: {...timeseriesSelection, selectedElectrodeIds: channelIds}, timeseriesSelectionDispatch: () => {}}
+    ), [timeseriesSelection, channelIds])
 
     return showReferenceProbe ? (
         <div style={{position: 'relative', width, height}}>
             <div style={{position: 'absolute', left: 0, top: 0, width: referenceProbeWidth, height}}>
-                <RecordingSelectionContext.Provider value={recordingSelectionProviderValue}>
+                <TimeseriesSelectionContext.Provider value={timeseriesSelectionProviderValue}>
                     <ElectrodeGeometry
                         electrodes={allElectrodes}
                         disableSelection={false}
                         width={referenceProbeWidth}
                         height={height}
                     />
-                </RecordingSelectionContext.Provider>
+                </TimeseriesSelectionContext.Provider>
             </div>
             <div style={{position: 'absolute', left: referenceProbeWidth, top: 0, width: width - referenceProbeWidth, height}}>
                 {waveformWidget}

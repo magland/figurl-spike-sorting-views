@@ -1,5 +1,5 @@
 import { Splitter } from '@figurl/core-views'
-import { DefaultToolbarWidth, TimeScrollView, TimeScrollViewPanel, usePanelDimensions, useProjectedYAxisTicks, useRecordingSelectionTimeInitialization, useTimeRange, useTimeseriesMargins, useYAxisTicks } from '@figurl/timeseries-views'
+import { DefaultToolbarWidth, TimeScrollView, TimeScrollViewPanel, usePanelDimensions, useProjectedYAxisTicks, useTimeseriesSelectionInitialization, useTimeRange, useTimeseriesMargins, useYAxisTicks } from '@figurl/timeseries-views'
 import { FunctionComponent, useMemo, useState } from 'react'
 import { idToNum } from '..'
 import { AmplitudeScaleToolbarEntries } from '../AmplitudeScaleToolbarEntries'
@@ -105,8 +105,8 @@ const paintPanel = (context: CanvasRenderingContext2D, props: PanelProps) => {
 }
 
 const SpikeAmplitudesViewChild: FunctionComponent<ChildProps> = ({data, timeseriesLayoutOpts, selectedUnitIds, width, height}) => {
-    useRecordingSelectionTimeInitialization(data.startTimeSec, data.endTimeSec)
-    const {visibleTimeStartSeconds, visibleTimeEndSeconds} = useTimeRange()
+    useTimeseriesSelectionInitialization(data.startTimeSec, data.endTimeSec)
+    const {visibleStartTimeSec, visibleEndTimeSec} = useTimeRange()
     const [ampScaleFactor, setAmpScaleFactor] = useState<number>(1)
 
     const margins = useTimeseriesMargins(timeseriesLayoutOpts)
@@ -123,7 +123,7 @@ const SpikeAmplitudesViewChild: FunctionComponent<ChildProps> = ({data, timeseri
             // we are going to assume that spikeTimesSec is *sorted*!
             // (Unfortunately there is no improvement from doing this.)
             const indices = unit.spikeTimesSec.reduce((array, time, indexInArrays) => {
-                (visibleTimeStartSeconds !== undefined) && (visibleTimeStartSeconds <= time) && (visibleTimeEndSeconds !== undefined) && (time <= visibleTimeEndSeconds) && array.push(indexInArrays)
+                (visibleStartTimeSec !== undefined) && (visibleStartTimeSec <= time) && (visibleEndTimeSec !== undefined) && (time <= visibleEndTimeSec) && array.push(indexInArrays)
                 return array
             }, [] as number[])
             const bottomIndex = indices[0]
@@ -138,7 +138,7 @@ const SpikeAmplitudesViewChild: FunctionComponent<ChildProps> = ({data, timeseri
                 amplitudes
             }
         })
-    ), [data.units, visibleTimeStartSeconds, visibleTimeEndSeconds, selectedUnitIds])
+    ), [data.units, visibleStartTimeSec, visibleEndTimeSec, selectedUnitIds])
 
     const amplitudeRange = useMemo(() => {
         const yMin = Math.min(0, min(series.map(S => (min(S.amplitudes)))))
@@ -149,8 +149,8 @@ const SpikeAmplitudesViewChild: FunctionComponent<ChildProps> = ({data, timeseri
     const pixelTransform = use2dScalingMatrix({
         totalPixelWidth: panelWidth,
         totalPixelHeight: panelHeight,
-        dataXMin: visibleTimeStartSeconds,
-        dataXMax: visibleTimeEndSeconds,
+        dataXMin: visibleStartTimeSec,
+        dataXMax: visibleEndTimeSec,
         dataYMin: amplitudeRange.yMin,
         dataYMax: amplitudeRange.yMax,
         yScaleFactor: ampScaleFactor,

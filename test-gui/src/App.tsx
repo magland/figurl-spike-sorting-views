@@ -6,7 +6,7 @@ import { useEffect, useMemo, useReducer, useState } from 'react';
 import './localStyles.css';
 import theme from './theme';
 import View from './View';
-import { defaultRecordingSelection, RecordingSelectionContext, recordingSelectionReducer } from '@figurl/timeseries-views';
+import { defaultTimeseriesSelection, TimeseriesSelectionContext, timeseriesSelectionReducer } from '@figurl/timeseries-views';
 import SetupSortingCuration from './package/context-sorting-curation/SetupSortingCuration';
 // import { SetupAnnotations } from 'libraries/context-annotations';
 
@@ -19,7 +19,7 @@ function App() {
   const {width, height} = useWindowDimensions()
 
   const [unitSelection, unitSelectionDispatch] = useReducer(unitSelectionReducer, defaultUnitSelection)
-  const [recordingSelection, recordingSelectionDispatch] = useReducer(recordingSelectionReducer, defaultRecordingSelection)
+  const [timeseriesSelection, timeseriesSelectionDispatch] = useReducer(timeseriesSelectionReducer, defaultTimeseriesSelection)
 
   const [unitMetricSelection, unitMetricSelectionDispatch] = useReducer(unitMetricSelectionReducer, {})
 
@@ -68,7 +68,7 @@ function App() {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <RecordingSelectionContext.Provider value={{recordingSelection, recordingSelectionDispatch}}>
+      <TimeseriesSelectionContext.Provider value={{timeseriesSelection, timeseriesSelectionDispatch}}>
         <UnitSelectionContext.Provider value={{unitSelection, unitSelectionDispatch}}>
           <UnitMetricSelectionContext.Provider value={{unitMetricSelection, unitMetricSelectionDispatch}}>
           {/* <SetupAnnotations> */}
@@ -85,7 +85,7 @@ function App() {
           {/* </SetupAnnotations> */}
           </UnitMetricSelectionContext.Provider>
         </UnitSelectionContext.Provider>
-      </RecordingSelectionContext.Provider>
+      </TimeseriesSelectionContext.Provider>
     </MuiThemeProvider>
   )
 }

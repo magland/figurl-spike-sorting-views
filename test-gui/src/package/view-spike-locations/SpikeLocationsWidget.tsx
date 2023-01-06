@@ -85,7 +85,7 @@ const SpikeLocationsWidget = (props: WidgetProps) => {
         const pixelRadius2 = pixelRadius * radiusScale
         // set up fills
         const electrodesWithColors = pixelElectrodes.map(e => {
-            const selected = selectedElectrodeIds.includes(e.e.id)
+            const selected = (selectedElectrodeIds || []).includes(e.e.id)
             const hovered = false
             const dragged = false
             const color = selected 
