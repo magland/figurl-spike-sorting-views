@@ -20,12 +20,12 @@ export const isSpikeLocationsViewData = (x: any): x is SpikeLocationsViewData =>
     return validateObject(x, {
         type: isEqualTo('SpikeLocations'),
         channelLocations: () => (true),
-        units: y => (validateObject(y, {
+        units: isArrayOf(y => (validateObject(y, {
             unitId: isOneOf([isString, isNumber]),
             spikeTimesSec: () => (true),
             xLocations: () => (true),
             yLocations: () => (true)
-        })),
+        }))),
         xRange: isArrayOf(isNumber),
         yRange: isArrayOf(isNumber),
         hideUnitSelector: optional(isBoolean),
