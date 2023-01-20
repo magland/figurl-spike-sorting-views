@@ -23,9 +23,9 @@
     object-hash "^3.0.0"
 
 "@figurl/core-views@^0.1":
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/@figurl/core-views/-/core-views-0.1.11.tgz#0f3bb7f5221c84b4c61de3d164456cb8f970ac50"
-  integrity sha512-pk7Ce65qAtTKgmZ80fOZtq1s7yvxxWTZD4beWeD8d+8xH69WOyJ2sjJIkP7HwHTI5KmfbYjxxk3dDPQZKMCKbA==
+  version "0.1.13"
+  resolved "https://registry.yarnpkg.com/@figurl/core-views/-/core-views-0.1.13.tgz#6a173a2cc395af4287838cf87bbb0cee3f0a65cf"
+  integrity sha512-dfKl2dX2ax0VHONuHUUikoXktNWzAzcuhLsuLj1okoltI4OljHMJ5MPqAPQlYWAmtX40Y4V2bjmFQWWXxBLU3A==
   dependencies:
     "@figurl/core-utils" "^0.1"
     "@figurl/interface" "^0.1"
@@ -218,9 +218,9 @@
     "@types/react" "*"
 
 "@types/react@*", "@types/react@^18.0.20":
-  version "18.0.26"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.26.tgz#8ad59fc01fef8eaf5c74f4ea392621749f0b7917"
-  integrity sha512-hCR3PJQsAIXyxhTNSiDFY//LhnMZWpNNr5etoCqx/iUfGc5gXWtQR2Phl908jVR6uPXacojQWTg4qRpkxTuGug==
+  version "18.0.27"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.27.tgz#d9425abe187a00f8a5ec182b010d4fd9da703b71"
+  integrity sha512-3vtRKHgVxu3Jp9t718R9BuzoD4NcQ8YJ5XRzsSKxNDiDonD2MXIT1TmSkenxuCycZJoQT5d2vE8LwWJxBC1gmA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -714,9 +714,9 @@ get-caller-file@^2.0.5:
   integrity sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==
 
 get-intrinsic@^1.0.2, get-intrinsic@^1.1.1, get-intrinsic@^1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/get-intrinsic/-/get-intrinsic-1.1.3.tgz#063c84329ad93e83893c7f4f243ef63ffa351385"
-  integrity sha512-QJVz1Tj7MS099PevUG5jvnt9tSkXN8K14dxQlikJuPt4uD9hHAHjLyLBiLR5zELelBdD9QNRAXZzsJx0WaDL9A==
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/get-intrinsic/-/get-intrinsic-1.2.0.tgz#7ad1dc0535f3a2904bba075772763e5051f6d05f"
+  integrity sha512-L049y6nFOuom5wGyRc3/gdTLO94dySVKRACj1RmJZBQXlbTMhtNIgkWkUHq+jYmZvKf14EW1EoJnnjbmoHij0Q==
   dependencies:
     function-bind "^1.1.1"
     has "^1.0.3"

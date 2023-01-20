@@ -48,7 +48,7 @@ const RasterPlotView: FunctionComponent<Props> = ({data, timeseriesLayoutOpts, w
         context.beginPath()
         for (const s of props.pixelSpikes) {
             context.moveTo(s, 0)
-            context.lineTo(s, panelHeight)
+            context.lineTo(s, Math.max(panelHeight, 1))
         }
         context.stroke()
     }, [panelHeight])
