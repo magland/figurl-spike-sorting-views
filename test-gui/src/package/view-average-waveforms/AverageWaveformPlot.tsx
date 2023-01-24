@@ -15,10 +15,12 @@ export type AverageWaveformPlotProps = {
         waveformColor: string
     }[]
     layoutMode: 'geom' | 'vertical'
+    hideElectrodes: boolean,
     channelLocations?: {[key: string]: number[]}
     samplingFrequency?: number
     peakAmplitude: number
     ampScaleFactor: number
+    horizontalStretchFactor: number
     showChannelIds: boolean
     width: number
     height: number
@@ -26,7 +28,7 @@ export type AverageWaveformPlotProps = {
     disableAutoRotate?: boolean
 }
 
-const AverageWaveformPlot: FunctionComponent<AverageWaveformPlotProps> = ({allChannelIds, channelIds, units, layoutMode, channelLocations, samplingFrequency, peakAmplitude, ampScaleFactor, showChannelIds, showReferenceProbe, disableAutoRotate, width, height}) => {
+const AverageWaveformPlot: FunctionComponent<AverageWaveformPlotProps> = ({allChannelIds, channelIds, units, layoutMode, hideElectrodes, channelLocations, samplingFrequency, peakAmplitude, ampScaleFactor, horizontalStretchFactor, showChannelIds, showReferenceProbe, disableAutoRotate, width, height}) => {
     const electrodes = useMemo(() => {
         const locs = channelLocations || {}
         return channelIds.map(channelId => ({
@@ -70,7 +72,9 @@ const AverageWaveformPlot: FunctionComponent<AverageWaveformPlotProps> = ({allCh
             waveforms={waveforms}
             electrodes={electrodes}
             ampScaleFactor={ampScaleFactor}
+            horizontalStretchFactor={horizontalStretchFactor}
             layoutMode={channelLocations ? layoutMode : 'vertical'}
+            hideElectrodes={hideElectrodes}
             width={showReferenceProbe ? width - referenceProbeWidth : width}
             height={height}
             showLabels={true} // for now

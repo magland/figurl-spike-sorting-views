@@ -11,7 +11,8 @@ interface Props {
     useHorizontalLayout?: boolean
 }
 
-const iconButtonStyle = {paddingLeft: 6, paddingRight: 6, paddingTop: 4, paddingBottom: 4}
+const iconButtonStyle = {paddingLeft: 0, paddingRight: 0, paddingTop: 1, paddingBottom: 1}
+export const viewToolbarWidth = 26
 
 type ToolbarElement = {
     type: string
@@ -103,7 +104,7 @@ const ToolbarCheckbox: FunctionComponent<ToolbarElement> = (props: ToolbarElemen
             key={props.elementIndex}
             checked={props.selected}
             onClick={props.onClick}
-            style={{padding: 1, paddingLeft: 6 }}
+            style={{padding: 0, paddingLeft: 0 }}
             title={props.title}
             disabled={props.disabled}
         />

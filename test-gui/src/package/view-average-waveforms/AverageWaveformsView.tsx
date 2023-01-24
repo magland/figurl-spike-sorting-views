@@ -6,8 +6,10 @@ import { idToNum, INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '..';
 import { AmplitudeScaleToolbarEntries } from '../AmplitudeScaleToolbarEntries';
 import { getUnitColor } from '../view-units-table/unitColors';
 import { defaultUnitsTableBottomToolbarOptions, ToolbarItem, UnitsTableBottomToolbar, UnitsTableBottomToolbarOptions, ViewToolbar } from '../ViewToolbar';
+import { viewToolbarWidth } from '../ViewToolbar/ViewToolbar';
 import AverageWaveformPlot, { AverageWaveformPlotProps } from './AverageWaveformPlot';
 import { AverageWaveformsViewData } from './AverageWaveformsViewData';
+import { FaArrowRight, FaArrowLeft, FaRegTimesCircle } from 'react-icons/fa'
 
 type Props = {
     data: AverageWaveformsViewData
@@ -36,6 +38,9 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
     const [showChannelIds, setShowChannelIds] = useState<boolean>(false)
     const [showReferenceProbe, setShowReferenceProbe] = useState<boolean>(data.showReferenceProbe || false)
     const [showOverlapping, setShowOverlapping] = useState<boolean>(false)
+
+    const [horizontalStretchFactor, setHorizontalStretchFactor] = useState(1)
+    const [hideElectrodes, setHideElectrodes] = useState(true)
 
     useEffect(() => {
         unitIdSelectionDispatch({ type: INITIALIZE_UNITS, newUnitOrder: sortIds(data.averageWaveforms.map(aw => aw.unitId)) })
@@ -75,10 +80,12 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             channelIds: aw.channelIds,
             units,
             layoutMode: waveformsMode,
+            hideElectrodes,
             channelLocations: data.channelLocations,
             samplingFrequency: data.samplingFrequency,
             peakAmplitude,
             ampScaleFactor,
+            horizontalStretchFactor,
             showChannelIds,
             width: 120 * plotBoxScaleFactor + (showReferenceProbe ? (120 * plotBoxScaleFactor / 4) : 0),
             height: 120 * plotBoxScaleFactor,
@@ -93,7 +100,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             clickHandler: !toolbarOptions.onlyShowSelected ? plotClickHandlerGenerator(aw.unitId) : undefined,
             props
         }
-    }), [data.averageWaveforms, data.channelLocations, data.samplingFrequency, allChannelIds, peakAmplitude, waveformsMode, ampScaleFactor, plotClickHandlerGenerator, toolbarOptions.onlyShowSelected, selectedUnitIds, plotBoxScaleFactor, showWaveformStdev, showChannelIds, showReferenceProbe, showOverlapping])
+    }), [data.averageWaveforms, data.channelLocations, data.samplingFrequency, allChannelIds, peakAmplitude, waveformsMode, ampScaleFactor, plotClickHandlerGenerator, toolbarOptions.onlyShowSelected, selectedUnitIds, plotBoxScaleFactor, showWaveformStdev, showChannelIds, showReferenceProbe, showOverlapping, horizontalStretchFactor, hideElectrodes])
 
     const plots2: PGPlot[] = useMemo(() => {
         if (orderedUnitIds) {
@@ -109,6 +116,29 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
         return plots2
     }, [plots2, showOverlapping])
 
+    const horizontalStretchToolbarEntries: ToolbarItem[] = useMemo(() => {
+        return [
+            {
+                type: 'button',
+                callback: () => {setHorizontalStretchFactor(x => (x * 1.1))},
+                title: 'Increase horizontal stretch',
+                icon: <FaArrowRight />
+            },
+            {
+                type: 'button',
+                callback: () => {setHorizontalStretchFactor(1)},
+                title: 'Reset scale amplitude',
+                icon: <FaRegTimesCircle />
+            },
+            {
+                type: 'button',
+                callback: () => {setHorizontalStretchFactor(x => (x / 1.1))},
+                title: 'Decrease horizontal stretch',
+                icon: <FaArrowLeft />
+            },
+        ]
+    }, [])
+
     const customToolbarActions = useMemo(() => {
         const amplitudeScaleToolbarEntries = AmplitudeScaleToolbarEntries({ampScaleFactor, setAmpScaleFactor})
         const showElectrodeGeometryAction: ToolbarItem = {
@@ -117,6 +147,13 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             callback: () => setWaveformsMode(m => (m === 'geom' ? 'vertical' : 'geom')),
             title: 'Show electrode geometry',
             selected: waveformsMode === 'geom'
+        }
+        const showElectrodesAction: ToolbarItem = {
+            type: 'toggle',
+            subtype: 'checkbox',
+            callback: () => setHideElectrodes(v => (!v)),
+            title: 'Show electrodes',
+            selected: !hideElectrodes
         }
         const boxSizeActions: ToolbarItem[] = [
             {
@@ -161,11 +198,15 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             selected: showOverlapping === true
         }
         return [
-            ...amplitudeScaleToolbarEntries,
-            {type: 'divider'},
-            showElectrodeGeometryAction,
             {type: 'divider'},
             ...boxSizeActions,
+            {type: 'divider'},
+            ...amplitudeScaleToolbarEntries,
+            {type: 'divider'},
+            ...horizontalStretchToolbarEntries,
+            {type: 'divider'},
+            showElectrodeGeometryAction,
+            showElectrodesAction,
             {type: 'divider'},
             showWaveformStdevAction,
             {type: 'divider'},
@@ -175,7 +216,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             {type: 'divider'},
             showOverlappingAction
         ]
-    }, [waveformsMode, ampScaleFactor, showWaveformStdev, showChannelIds, showOverlapping, showReferenceProbe])
+    }, [waveformsMode, ampScaleFactor, showWaveformStdev, showChannelIds, showOverlapping, showReferenceProbe, horizontalStretchToolbarEntries, hideElectrodes])
 
     const handleWheel = useCallback((e: React.WheelEvent) => {
         if (!e.shiftKey) return
@@ -200,7 +241,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
 
     const bottomToolbarHeight = 30
 
-    const TOOLBAR_WIDTH = 36 // hard-coded for now
+    const TOOLBAR_WIDTH = viewToolbarWidth // hard-coded for now
     return (
         <div
             onWheel={handleWheel}

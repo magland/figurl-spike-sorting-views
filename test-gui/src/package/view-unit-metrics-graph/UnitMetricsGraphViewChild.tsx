@@ -4,6 +4,7 @@ import { FaMinus, FaPlus } from 'react-icons/fa';
 import { determinePlotSizeForSquareMatrixGrid, idToNum, INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '..';
 import { useUnitMetricSelection } from '../context-unit-metrics-selection';
 import { ToolbarItem, ViewToolbar } from '../ViewToolbar';
+import { viewToolbarWidth } from '../ViewToolbar/ViewToolbar';
 import UnitMetricPlot, { UnitMetricPlotProps } from './UnitMetricPlot';
 import { UMGMetric, UnitMetricsGraphViewData } from './UnitMetricsGraphViewData';
 
@@ -93,7 +94,7 @@ const UnitMetricsGraphViewChild: FunctionComponent<Props> = ({data, width, heigh
         ]
     }, [selectedUnitMetrics.length])
 
-    const TOOLBAR_WIDTH = 36 // hard-coded for now
+    const TOOLBAR_WIDTH = viewToolbarWidth // hard-coded for now
 
     const plots: PGPlot[] = useMemo(() => {
         const setSelectedUnitIds = (unitIds: (string | number)[]) => {
@@ -249,7 +250,7 @@ const UnitMetricsGraphViewChild: FunctionComponent<Props> = ({data, width, heigh
             }
             return ret
         }
-    }, [metrics, selectedUnitIds, unitsSorted, plotBoxScaleFactor, selectedUnitMetrics, numHistogramBins, width, height, unitIdSelectionDispatch, metricRanges])
+    }, [metrics, selectedUnitIds, unitsSorted, plotBoxScaleFactor, selectedUnitMetrics, numHistogramBins, width, height, unitIdSelectionDispatch, metricRanges, TOOLBAR_WIDTH])
 
     return (
         <div>

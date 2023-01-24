@@ -5,6 +5,7 @@ import { LockableSelectUnitsWidget, useLocalSelectedUnitIds } from '../SelectUni
 import { CorrelogramPlot } from '../view-autocorrelograms';
 import { getUnitColor } from '../view-units-table/unitColors';
 import { ToolbarItem, ViewToolbar } from '../ViewToolbar';
+import { viewToolbarWidth } from '../ViewToolbar/ViewToolbar';
 import { CrossCorrelogramData, CrossCorrelogramsViewData } from './CrossCorrelogramsViewData';
 
 type Props = {
@@ -104,7 +105,7 @@ const CrossCorrelogramsViewChild: FunctionComponent<ChildProps> = ({data, width,
         return ret
     }, [data.crossCorrelograms, unitIds])
 
-    const TOOLBAR_WIDTH = 36 // hard-coded for now
+    const TOOLBAR_WIDTH = viewToolbarWidth // hard-coded for now
     const W = width - TOOLBAR_WIDTH
     const H = height
     const plots: PGPlot[] = useMemo(() => {

@@ -21,8 +21,10 @@ export type WaveformWidgetProps = {
         waveformColors: WaveformColors
     }[]
     ampScaleFactor: number
+    horizontalStretchFactor: number
     electrodes: Electrode[]
     layoutMode: LayoutMode
+    hideElectrodes: boolean
     width: number
     height: number
     colors?: ElectrodeColors
@@ -65,7 +67,7 @@ export const defaultWaveformOpts: WaveformOpts = {
 // TODO: FIX SNIPPET BOX
 const WaveformWidget: FunctionComponent<WaveformWidgetProps> = (props) => {
     const colors = props.colors ?? defaultElectrodeOpts.colors
-    const {electrodes, waveforms, ampScaleFactor: userSpecifiedAmplitudeScaling, layoutMode, width, height, showChannelIds, waveformWidth, disableAutoRotate} = props
+    const {electrodes, waveforms, ampScaleFactor: userSpecifiedAmplitudeScaling, horizontalStretchFactor, layoutMode, hideElectrodes, width, height, showChannelIds, waveformWidth, disableAutoRotate} = props
 
     const maxElectrodePixelRadius = 1000
 
@@ -102,6 +104,7 @@ const WaveformWidget: FunctionComponent<WaveformWidgetProps> = (props) => {
         waveforms={waveforms}
         oneElectrodeHeight={oneElectrodeHeight}
         oneElectrodeWidth={oneElectrodeWidth}
+        horizontalStretchFactor={horizontalStretchFactor}
         yScale={yScaleFactor}
         width={width}
         height={height}
@@ -112,7 +115,7 @@ const WaveformWidget: FunctionComponent<WaveformWidgetProps> = (props) => {
 
     return (
         <div style={{width, height, position: 'relative'}} onWheel={handleWheel}>
-            {geometry}
+            {!hideElectrodes && geometry}
             {waveformPlot}
         </div>
     )

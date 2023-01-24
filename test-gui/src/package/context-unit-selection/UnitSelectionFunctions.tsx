@@ -96,7 +96,10 @@ export const toggleSelectedRange = (s: UnitSelection, a: UnitSelectionAction): U
     const { selectedUnitIds, lastClickedId, orderedUnitIds } = s
     const { targetUnit } = a
     if (orderedUnitIds.length === 0) throw Error(`Attempt to toggle range with no units initialized.`)
-    if (!lastClickedId || !targetUnit) throw Error(`Cannot toggle range with undefined limit: last-clicked ${lastClickedId}, target ${targetUnit}`)
+    if (!lastClickedId || !targetUnit) {
+        console.warn(`Cannot toggle range with undefined limit: last-clicked ${lastClickedId}, target ${targetUnit}`)
+        return s
+    }
     const lastClickedIndex = orderedUnitIds.findIndex(id => id === lastClickedId)
     const targetIndex = orderedUnitIds.findIndex(id => id === targetUnit)
     if (lastClickedIndex === -1 || targetIndex === -1) {

@@ -34,13 +34,13 @@ const AmplitudeScaleToolbarEntries = (props: AmplitudeScaleToolbarProps): Toolba
             title: 'Scale amplitude down [shift + mouse wheel]',
             icon: <FaArrowDown />,
             keyCode: 40
-        },
-        {
-            type: 'text',
-            title: 'Amplitude scaling factor',
-            content: ampScaleFactor,
-            contentSigFigs: 2
         }
+        // {
+        //     type: 'text',
+        //     title: 'Amplitude scaling factor',
+        //     content: ampScaleFactor,
+        //     contentSigFigs: 2
+        // }
     ]
 }
 

@@ -4,6 +4,7 @@ import { FaMinus, FaPlus } from 'react-icons/fa';
 import { idToNum, INITIALIZE_UNITS, sortIds, useSelectedUnitIds } from '../context-unit-selection';
 import { getUnitColor } from '../view-units-table/unitColors';
 import { defaultUnitsTableBottomToolbarOptions, ToolbarItem, UnitsTableBottomToolbar, UnitsTableBottomToolbarOptions, ViewToolbar } from '../ViewToolbar';
+import { viewToolbarWidth } from '../ViewToolbar/ViewToolbar';
 import { AutocorrelogramsViewData } from './AutocorrelogramsViewData';
 import CorrelogramPlot from './CorrelogramPlot';
 
@@ -75,7 +76,7 @@ const AutocorrelogramsView: FunctionComponent<Props> = ({data, width, height}) =
     }, [showXAxis])
 
     const bottomToolbarHeight = 30
-    const TOOLBAR_WIDTH = 36 // hard-coded for now
+    const TOOLBAR_WIDTH = viewToolbarWidth // hard-coded for now
     return (
         <div>
             <Splitter

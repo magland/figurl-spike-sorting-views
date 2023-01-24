@@ -1,5 +1,4 @@
-import { BaseCanvas } from '@figurl/core-views'
-import { TransformationMatrix, transformPoints, Vec2 } from '@figurl/core-views'
+import { BaseCanvas, TransformationMatrix, transformPoints, Vec2 } from '@figurl/core-views'
 import { matrix } from "mathjs"
 import { useMemo } from 'react'
 import { AffineTransform } from '../../view-unit-similarity-matrix'
@@ -30,6 +29,7 @@ export type WaveformProps = {
     oneElectrodeWidth: number
     oneElectrodeHeight: number
     yScale: number
+    horizontalStretchFactor: number
     width: number
     height: number
     layoutMode?: LayoutMode
@@ -60,7 +60,8 @@ const computePaths = (
         waveformColors: WaveformColors
     }[],
     electrodes: PixelSpaceElectrode[],
-    mode: 'normal' | 'lower' | 'upper'
+    mode: 'normal' | 'lower' | 'upper',
+    horizontalStretchFactor: number
 ): PixelSpacePath[] => {
     // const pointsPerWaveform = waveforms.length > 0 ? waveforms[0].waveform.length > 0 ? waveforms[0].waveform[0].length : 0 : 0 // assumed constant across all
     // Flatten a list of waveforms (waveforms[i] = WaveformPoint[] = array of {time, amplitude}) to Vec2[] for vectorized point conversion
@@ -84,7 +85,10 @@ const computePaths = (
                     ww = wsd ? W.waveform[jj].map((v, i) => (W.waveform[jj][i] + wsd[jj][i])) : undefined
                 }
                 if (ww) {
-                    const points: Vec2[] = ww.map((amplitude, time) => ([time, amplitude]))
+                    const points: Vec2[] = ww.map((amplitude, time) => ([
+                        (ww?.length || 0) / 2 + (time - (ww?.length || 0) / 2) * horizontalStretchFactor,
+                        amplitude
+                    ]))
                     const pointsProjectedToElectrodeBox = transformPoints(transform, points)
                     ret.push({
                         pointsInPaintBox: pointsProjectedToElectrodeBox,
@@ -157,7 +161,7 @@ const paint = (ctxt: CanvasRenderingContext2D, props: PaintProps) => {
 
 
 const WaveformPlot = (props: WaveformProps) => {
-    const { electrodes, waveforms, oneElectrodeHeight, oneElectrodeWidth, yScale, width, height, layoutMode, waveformWidth, affineTransform } = props
+    const { electrodes, waveforms, oneElectrodeHeight, oneElectrodeWidth, yScale, horizontalStretchFactor, width, height, layoutMode, waveformWidth, affineTransform } = props
 
     const canvas = useMemo(() => {
         const pointsPerWaveform = waveforms.length > 0 ? waveforms[0].waveform.length > 0 ? waveforms[0].waveform[0].length : 0 : 0 // assumed constant across all
@@ -169,11 +173,11 @@ const WaveformPlot = (props: WaveformProps) => {
                                   [        0,    -finalYScale,                0],
                                   [        0,               0,                1]]
                                 ).toArray() as TransformationMatrix
-        const paths = computePaths(transform, waveforms, electrodes, 'normal')
-        const pathsLower = computePaths(transform, waveforms, electrodes, 'lower')
-        const pathsUpper = computePaths(transform, waveforms, electrodes, 'upper')
-        // const pathsLower = waveformLowerPoints ? computePaths(transform, waveformLowerPoints, electrodes) : undefined
-        // const pathsUpper = waveformUpperPoints ? computePaths(transform, waveformUpperPoints, electrodes) : undefined
+        const paths = computePaths(transform, waveforms, electrodes, 'normal', horizontalStretchFactor)
+        const pathsLower = computePaths(transform, waveforms, electrodes, 'lower', horizontalStretchFactor)
+        const pathsUpper = computePaths(transform, waveforms, electrodes, 'upper', horizontalStretchFactor)
+        // const pathsLower = waveformLowerPoints ? computePaths(transform, waveformLowerPoints, electrodes, horizontalStretchFactor) : undefined
+        // const pathsUpper = waveformUpperPoints ? computePaths(transform, waveformUpperPoints, electrodes, horizontalStretchFactor) : undefined
         const xMargin = layoutMode === 'vertical' ? (width - oneElectrodeWidth)/2 : 0
 
         const paintProps: PaintProps = {
@@ -191,7 +195,7 @@ const WaveformPlot = (props: WaveformProps) => {
             draw={paint}
             drawData={paintProps}
         />
-    }, [waveforms, electrodes, yScale, width, height, oneElectrodeWidth, oneElectrodeHeight, layoutMode, waveformWidth, affineTransform])
+    }, [waveforms, electrodes, yScale, width, height, oneElectrodeWidth, oneElectrodeHeight, layoutMode, waveformWidth, affineTransform, horizontalStretchFactor])
 
     return canvas
 }
