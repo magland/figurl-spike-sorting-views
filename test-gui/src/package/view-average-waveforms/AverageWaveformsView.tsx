@@ -121,7 +121,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             {
                 type: 'button',
                 callback: () => {setHorizontalStretchFactor(x => (x * 1.1))},
-                title: 'Increase horizontal stretch',
+                title: 'Increase horizontal stretch [alt + mouse-wheel]',
                 icon: <FaArrowRight />
             },
             {
@@ -133,7 +133,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             {
                 type: 'button',
                 callback: () => {setHorizontalStretchFactor(x => (x / 1.1))},
-                title: 'Decrease horizontal stretch',
+                title: 'Decrease horizontal stretch [alt + mouse-wheel]',
                 icon: <FaArrowLeft />
             },
         ]
@@ -219,31 +219,41 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
     }, [waveformsMode, ampScaleFactor, showWaveformStdev, showChannelIds, showOverlapping, showReferenceProbe, horizontalStretchToolbarEntries, hideElectrodes])
 
     const handleWheel = useCallback((e: React.WheelEvent) => {
-        if (!e.shiftKey) return
-        if (e.altKey) return
-        if (e.deltaY < 0) {
-            setAmpScaleFactor(s => (s * 1.3))
+        if ((e.shiftKey) && (!e.altKey)) {
+            if (e.deltaY < 0) {
+                setAmpScaleFactor(s => (s * 1.3))
+            }
+            else {
+                setAmpScaleFactor(s => (s / 1.3))
+            }
+            // note: we cannot prevent default here, so that's done below in setupDivRef
         }
-        else {
-            setAmpScaleFactor(s => (s / 1.3))
+        else if ((e.altKey) && (!e.shiftKey)) {
+            if (e.deltaY < 0) {
+                setHorizontalStretchFactor(s => (s * 1.1))
+            }
+            else {
+                setHorizontalStretchFactor(s => (s / 1.1))
+            }
+            // note: we cannot prevent default here, so that's done below in setupDivRef
         }
-        return false // don't scroll
     }, [])
 
-    // useEffect(() => {
-    //     if (!divRef.current) return
-    //     divRef.current.addEventListener('wheel', (e: WheelEvent) => {
-    //         if (e.shiftKey) {
-    //             e.preventDefault()
-    //         }
-    //     })
-    // }, [divRef])
-
     const bottomToolbarHeight = 30
+
+    const setupDivRef = useCallback((elmt: HTMLDivElement | null) => {
+        if (!elmt) return
+        elmt.addEventListener('wheel', e => {
+            if ((e.shiftKey) || (e.altKey)) {
+                e.preventDefault()
+            }
+        })
+    }, [])
 
     const TOOLBAR_WIDTH = viewToolbarWidth // hard-coded for now
     return (
         <div
+            ref={elmt => setupDivRef(elmt)}
             onWheel={handleWheel}
         >
             <Splitter
