@@ -118,6 +118,7 @@ const SaveControl: FunctionComponent<Props> = ({fallbackUri, uri, setUri, object
 			}
 			finally {
 				setSaving(false)
+				setEditingGithubUri(false)
 			}
 		})()
 	}, [object, setUri])
@@ -267,7 +268,11 @@ const SaveControl: FunctionComponent<Props> = ({fallbackUri, uri, setUri, object
 							<br />
 						</span>
 					) : (
-						<EditGithubUriControl onSubmit={uri => {handleSaveGithubAs(uri)}} onCancel={() => setEditingGithubUri(false)} />
+						<EditGithubUriControl
+							initialValue={uri || ''}
+							onSubmit={uri => {handleSaveGithubAs(uri)}}
+							onCancel={() => setEditingGithubUri(false)}
+						/>
 					)
 				}
 				<span>
