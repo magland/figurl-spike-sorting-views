@@ -1,7 +1,7 @@
 import { Checkbox } from "@material-ui/core";
 import { SortingCuration, useSortingCuration } from "..";
 import { useSelectedUnitIds } from "..";
-import { FunctionComponent, useCallback, useMemo } from "react";
+import { FunctionComponent, useCallback, useEffect, useMemo } from "react";
 import { SortingCuration2ViewData } from "./SortingCuration2ViewData";
 import SaveControl from "./SaveControl";
 import { useUrlState } from "@figurl/interface";
@@ -16,7 +16,7 @@ const standardLabelChoices = ['accept', 'reject', 'noise', 'artifact', 'mua']
 
 const SortingCuration2View: FunctionComponent<Props> = ({data, width, height}) => {
     const {labelChoices: labelChoicesFromData} = data
-    const {sortingCuration, sortingCurationDispatch} = useSortingCuration()
+    const {sortingCuration, sortingCurationDispatch, setLabelChoices} = useSortingCuration()
     const {selectedUnitIds: selectedUnitIdsSet, orderedUnitIds, unitIdSelectionDispatch} = useSelectedUnitIds()
 
     const {urlState, updateUrlState} = useUrlState()
@@ -30,6 +30,9 @@ const SortingCuration2View: FunctionComponent<Props> = ({data, width, height}) =
     const labelChoices = useMemo(() => (
         getAllLabelChoices(sortingCuration, labelChoicesFromData)
     ), [sortingCuration, labelChoicesFromData])
+    useEffect(() => {
+        setLabelChoices && setLabelChoices(labelChoices)
+    }, [labelChoices, setLabelChoices])
     const labelCheckboxStates = useMemo(() => (
         getLabelCheckboxStates(labelChoices, sortingCuration, selectedUnitIds, sortingCurationDispatch === undefined)
     ), [labelChoices, sortingCuration, selectedUnitIds, sortingCurationDispatch])

@@ -42,6 +42,8 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
     const [horizontalStretchFactor, setHorizontalStretchFactor] = useState(1)
     const [hideElectrodes, setHideElectrodes] = useState(true)
 
+    const [useUnitColors, setUseUnitColors] = useState(true)
+
     useEffect(() => {
         unitIdSelectionDispatch({ type: INITIALIZE_UNITS, newUnitOrder: sortIds(data.averageWaveforms.map(aw => aw.unitId)) })
     }, [data.averageWaveforms, unitIdSelectionDispatch])
@@ -87,6 +89,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             ampScaleFactor,
             horizontalStretchFactor,
             showChannelIds,
+            useUnitColors,
             width: 120 * plotBoxScaleFactor + (showReferenceProbe ? (120 * plotBoxScaleFactor / 4) : 0),
             height: 120 * plotBoxScaleFactor,
             showReferenceProbe,
@@ -100,7 +103,7 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             clickHandler: !toolbarOptions.onlyShowSelected ? plotClickHandlerGenerator(aw.unitId) : undefined,
             props
         }
-    }), [data.averageWaveforms, data.channelLocations, data.samplingFrequency, allChannelIds, peakAmplitude, waveformsMode, ampScaleFactor, plotClickHandlerGenerator, toolbarOptions.onlyShowSelected, selectedUnitIds, plotBoxScaleFactor, showWaveformStdev, showChannelIds, showReferenceProbe, showOverlapping, horizontalStretchFactor, hideElectrodes])
+    }), [data.averageWaveforms, data.channelLocations, data.samplingFrequency, allChannelIds, peakAmplitude, waveformsMode, ampScaleFactor, plotClickHandlerGenerator, toolbarOptions.onlyShowSelected, selectedUnitIds, plotBoxScaleFactor, showWaveformStdev, showChannelIds, showReferenceProbe, showOverlapping, horizontalStretchFactor, hideElectrodes, useUnitColors])
 
     const plots2: PGPlot[] = useMemo(() => {
         if (orderedUnitIds) {
@@ -197,6 +200,13 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             title: 'Show overlapping',
             selected: showOverlapping === true
         }
+        const useUnitColorsAction: ToolbarItem = {
+            type: 'toggle',
+            subtype: 'checkbox',
+            callback: () => setUseUnitColors(a => (!a)),
+            title: 'Use unit colors',
+            selected: useUnitColors === true
+        }
         return [
             {type: 'divider'},
             ...boxSizeActions,
@@ -214,9 +224,11 @@ const AverageWaveformsView: FunctionComponent<Props> = ({data, width, height}) =
             {type: 'divider'},
             showReferenceProbeAction,
             {type: 'divider'},
-            showOverlappingAction
+            showOverlappingAction,
+            {type: 'divider'},
+            useUnitColorsAction
         ]
-    }, [waveformsMode, ampScaleFactor, showWaveformStdev, showChannelIds, showOverlapping, showReferenceProbe, horizontalStretchToolbarEntries, hideElectrodes])
+    }, [waveformsMode, ampScaleFactor, showWaveformStdev, showChannelIds, showOverlapping, showReferenceProbe, horizontalStretchToolbarEntries, hideElectrodes, useUnitColors])
 
     const handleWheel = useCallback((e: React.WheelEvent) => {
         if ((e.shiftKey) && (!e.altKey)) {

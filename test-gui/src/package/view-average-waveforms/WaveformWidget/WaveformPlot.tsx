@@ -34,6 +34,7 @@ export type WaveformProps = {
     height: number
     layoutMode?: LayoutMode
     affineTransform?: AffineTransform
+    useUnitColors: boolean
 }
 
 type PixelSpacePath = {
@@ -49,6 +50,7 @@ type PaintProps = {
     pixelSpacePathsUpper?: PixelSpacePath[]
     xMargin: number
     affineTransform?: AffineTransform
+    useUnitColors: boolean
 }
 
 const computePaths = (
@@ -103,7 +105,7 @@ const computePaths = (
 }
 
 const paint = (ctxt: CanvasRenderingContext2D, props: PaintProps) => {
-    const { pixelSpacePaths, pixelSpacePathsLower, pixelSpacePathsUpper, xMargin, waveformWidth, affineTransform } = props
+    const { pixelSpacePaths, pixelSpacePathsLower, pixelSpacePathsUpper, xMargin, waveformWidth, affineTransform, useUnitColors } = props
     if (!pixelSpacePaths || pixelSpacePaths.length === 0) return
 
     ctxt.resetTransform()
@@ -144,7 +146,7 @@ const paint = (ctxt: CanvasRenderingContext2D, props: PaintProps) => {
     })
 
     pixelSpacePaths.forEach((p) => {
-        ctxt.strokeStyle = p.color
+        ctxt.strokeStyle = useUnitColors ? p.color : 'black'
         ctxt.lineWidth = waveformWidth
         ctxt.translate(p.offsetFromParentCenter[0], p.offsetFromParentCenter[1])
         ctxt.beginPath()
@@ -161,7 +163,7 @@ const paint = (ctxt: CanvasRenderingContext2D, props: PaintProps) => {
 
 
 const WaveformPlot = (props: WaveformProps) => {
-    const { electrodes, waveforms, oneElectrodeHeight, oneElectrodeWidth, yScale, horizontalStretchFactor, width, height, layoutMode, waveformWidth, affineTransform } = props
+    const { electrodes, waveforms, oneElectrodeHeight, oneElectrodeWidth, yScale, horizontalStretchFactor, width, height, layoutMode, waveformWidth, affineTransform, useUnitColors } = props
 
     const canvas = useMemo(() => {
         const pointsPerWaveform = waveforms.length > 0 ? waveforms[0].waveform.length > 0 ? waveforms[0].waveform[0].length : 0 : 0 // assumed constant across all
@@ -186,7 +188,8 @@ const WaveformPlot = (props: WaveformProps) => {
             pixelSpacePathsUpper: pathsUpper,
             xMargin: xMargin,
             waveformWidth,
-            affineTransform
+            affineTransform,
+            useUnitColors
         }
 
         return <BaseCanvas<PaintProps>
@@ -195,7 +198,7 @@ const WaveformPlot = (props: WaveformProps) => {
             draw={paint}
             drawData={paintProps}
         />
-    }, [waveforms, electrodes, yScale, width, height, oneElectrodeWidth, oneElectrodeHeight, layoutMode, waveformWidth, affineTransform, horizontalStretchFactor])
+    }, [waveforms, electrodes, yScale, width, height, oneElectrodeWidth, oneElectrodeHeight, layoutMode, waveformWidth, affineTransform, horizontalStretchFactor, useUnitColors])
 
     return canvas
 }

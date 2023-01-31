@@ -11,6 +11,7 @@ export type WaveformOpts = {
     colors?: WaveformColors
     waveformWidth: number
     showChannelIds: boolean
+    useUnitColors: boolean
 }
 
 export type WaveformWidgetProps = {
@@ -32,6 +33,7 @@ export type WaveformWidgetProps = {
     peakAmplitude: number
     samplingFrequency?: number
     showChannelIds: boolean
+    useUnitColors: boolean
     waveformWidth: number
     disableAutoRotate?: boolean
 }
@@ -60,14 +62,15 @@ const defaultElectrodeOpts = {
 export const defaultWaveformOpts: WaveformOpts = {
     colors: waveformColors,
     waveformWidth: 2,
-    showChannelIds: true
+    showChannelIds: true,
+    useUnitColors: true
 }
 
 // TODO: FIX AVG WAVEFORM NUMPY VIEW
 // TODO: FIX SNIPPET BOX
 const WaveformWidget: FunctionComponent<WaveformWidgetProps> = (props) => {
     const colors = props.colors ?? defaultElectrodeOpts.colors
-    const {electrodes, waveforms, ampScaleFactor: userSpecifiedAmplitudeScaling, horizontalStretchFactor, layoutMode, hideElectrodes, width, height, showChannelIds, waveformWidth, disableAutoRotate} = props
+    const {electrodes, waveforms, ampScaleFactor: userSpecifiedAmplitudeScaling, horizontalStretchFactor, layoutMode, hideElectrodes, width, height, showChannelIds, useUnitColors, waveformWidth, disableAutoRotate} = props
 
     const maxElectrodePixelRadius = 1000
 
@@ -111,6 +114,7 @@ const WaveformWidget: FunctionComponent<WaveformWidgetProps> = (props) => {
         layoutMode={layoutMode}
         waveformWidth={waveformWidth}
         affineTransform={affineTransform}
+        useUnitColors={useUnitColors}
     />
 
     return (
