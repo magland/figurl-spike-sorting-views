@@ -8,7 +8,6 @@ import { RasterPlotViewData } from './RasterPlotViewData'
 
 type Props = {
     data: RasterPlotViewData
-    timeseriesLayoutOpts?: TimeseriesLayoutOpts
     width: number
     height: number
 }
@@ -26,8 +25,10 @@ type PanelProps = {
 
 const panelSpacing = 4
 
-const RasterPlotView: FunctionComponent<Props> = ({data, timeseriesLayoutOpts, width, height}) => {
+const RasterPlotView: FunctionComponent<Props> = ({data, width, height}) => {
     const {selectedUnitIds} = useSelectedUnitIds()
+
+    const timeseriesLayoutOpts = useMemo(() => ({hideToolbar: data.hideToolbar}), [data.hideToolbar])
 
     useTimeseriesSelectionInitialization(data.startTimeSec, data.endTimeSec)
     const { visibleStartTimeSec, visibleEndTimeSec } = useTimeRange()

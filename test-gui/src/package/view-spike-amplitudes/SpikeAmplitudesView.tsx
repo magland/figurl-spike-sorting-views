@@ -11,7 +11,6 @@ import { SpikeAmplitudesViewData } from './SpikeAmplitudesViewData'
 
 type Props = {
     data: SpikeAmplitudesViewData
-    timeseriesLayoutOpts?: TimeseriesLayoutOpts
     width: number
     height: number
 }
@@ -28,8 +27,10 @@ type PanelProps = {
 const panelSpacing = 4
 const MAX_UNITS_SELECTED = 10
 
-const SpikeAmplitudesView: FunctionComponent<Props> = ({data, timeseriesLayoutOpts, width, height}) => {
+const SpikeAmplitudesView: FunctionComponent<Props> = ({data, width, height}) => {
     const {selectedUnitIds, currentUnitId, orderedUnitIds, visibleUnitIds, checkboxClickHandlerGenerator, unitIdSelectionDispatch, selectionLocked, toggleSelectionLocked} = useLocalSelectedUnitIds()
+
+    const timeseriesLayoutOpts = useMemo(() => ({hideToolbar: data.hideToolbar}), [data.hideToolbar])
 
     const allUnitIds = useMemo(() => (
         data.units.map(u => (u.unitId))

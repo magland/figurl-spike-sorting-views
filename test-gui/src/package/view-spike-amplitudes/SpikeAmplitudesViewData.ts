@@ -21,6 +21,7 @@ export type SpikeAmplitudesViewData = {
     endTimeSec: number
     units: SAUnitData[]
     hideUnitSelector?: boolean
+    hideToolbar?: boolean
 }
 
 export const isSpikeAmplitudesViewData = (x: any): x is SpikeAmplitudesViewData => {
@@ -29,6 +30,7 @@ export const isSpikeAmplitudesViewData = (x: any): x is SpikeAmplitudesViewData 
         startTimeSec: isNumber,
         endTimeSec: isNumber,
         units: isArrayOf(isSAUnitData),
-        hideUnitSelector: optional(isBoolean)
+        hideUnitSelector: optional(isBoolean),
+        hideToolbar: optional(isBoolean)
     })
 }

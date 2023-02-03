@@ -1,5 +1,5 @@
 import { validateObject } from "@figurl/core-utils"
-import { isArrayOf, isOneOf, isString, isEqualTo, isNumber, optional } from "@figurl/core-utils"
+import { isArrayOf, isOneOf, isString, isEqualTo, isNumber, optional, isBoolean } from "@figurl/core-utils"
 import { HighlightIntervalSet, isHighlightIntervalSet } from '@figurl/timeseries-views'
 
 type RPPlotData = {
@@ -20,6 +20,7 @@ export type RasterPlotViewData = {
     endTimeSec: number
     plots: RPPlotData[]
     highlightIntervals?: HighlightIntervalSet[]
+    hideToolbar?: boolean
 }
 
 export const isRasterPlotViewData = (x: any): x is RasterPlotViewData => {
@@ -28,6 +29,7 @@ export const isRasterPlotViewData = (x: any): x is RasterPlotViewData => {
         startTimeSec: isNumber,
         endTimeSec: isNumber,
         plots: isArrayOf(isRPPlotData),
-        highlightIntervals: optional(isArrayOf(isHighlightIntervalSet))
+        highlightIntervals: optional(isArrayOf(isHighlightIntervalSet)),
+        hideToolbar: optional(isBoolean)
     })
 }
