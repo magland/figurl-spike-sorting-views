@@ -31,7 +31,7 @@ const SetupSortingCuration: FunctionComponent<PropsWithChildren<Props>> = ({chil
         if (num >= 0) {
             if (num - 1 < (labelChoices || []).length) {
                 sortingCurationDispatch({
-                    type: 'ADD_UNIT_LABEL',
+                    type: 'TOGGLE_UNIT_LABEL',
                     label: (labelChoices || [])[num - 1],
                     unitId: [...selectedUnitIds]
                 })

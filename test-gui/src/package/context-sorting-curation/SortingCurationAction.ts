@@ -6,6 +6,12 @@ export interface AddUnitLabelCurationAction {
     label: string
 }
 
+export interface ToggleUnitLabelCurationAction {
+    type: 'TOGGLE_UNIT_LABEL'
+    unitId: number | string | (number | string)[]
+    label: string
+}
+
 export interface RemoveUnitLabelCurationAction {
     type: 'REMOVE_UNIT_LABEL'
     unitId: number | string | (number | string)[]
@@ -35,6 +41,6 @@ export interface ReopenCurationCurationAction {
     type: 'REOPEN_CURATION'
 }
 
-type SortingCurationAction = AddUnitLabelCurationAction | RemoveUnitLabelCurationAction | MergeUnitsCurationAction | UnmergeUnitsCurationAction | SetCurationCurationAction | CloseCurationCurationAction | ReopenCurationCurationAction
+type SortingCurationAction = AddUnitLabelCurationAction | ToggleUnitLabelCurationAction | RemoveUnitLabelCurationAction | MergeUnitsCurationAction | UnmergeUnitsCurationAction | SetCurationCurationAction | CloseCurationCurationAction | ReopenCurationCurationAction
 
 export default SortingCurationAction

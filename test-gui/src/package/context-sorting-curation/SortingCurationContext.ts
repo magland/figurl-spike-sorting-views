@@ -42,6 +42,22 @@ export const sortingCurationReducer = (state: SortingCuration, action: SortingCu
         }
         else return state
     }
+    else if (action.type === 'TOGGLE_UNIT_LABEL') {
+        const uids: (number | string)[] = typeof(action.unitId) === 'object' ? action.unitId : [action.unitId]
+        let toggleOff = true
+        for (const uid of uids) {
+            const labels = (state.labelsByUnit || {})[uid + ''] || []
+            if (!labels.includes(action.label)) {
+                toggleOff = false
+            }
+        }
+        if (toggleOff) {
+            return sortingCurationReducer(state, {type: 'REMOVE_UNIT_LABEL', unitId: action.unitId, label: action.label})
+        }
+        else {
+            return sortingCurationReducer(state, {type: 'ADD_UNIT_LABEL', unitId: action.unitId, label: action.label})
+        }
+    }
     else if (action.type === 'REMOVE_UNIT_LABEL') {
         const uids: (number | string)[] = typeof(action.unitId) === 'object' ? action.unitId : [action.unitId]
         const newLabelsByUnit = {...(state.labelsByUnit || {})}
