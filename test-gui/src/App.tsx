@@ -50,10 +50,6 @@ function App() {
     return (
       <div style={{padding: 20}}>
         <h2>This page is not being embedded as a figurl figure.</h2>
-        <h3>Here are some examples you may want to try:</h3>
-        <ul>
-          <li><a href="https://www.figurl.org/f?v=http://localhost:3000&d=sha1://5be70cba528fb561f791b8a777410c045994cf1b&label=Autocorrelograms%20example&s={}">autocorrelograms</a></li>
-        </ul>
       </div>
     )
   }

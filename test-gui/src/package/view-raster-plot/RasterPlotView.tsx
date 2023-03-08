@@ -58,7 +58,7 @@ const RasterPlotView: FunctionComponent<Props> = ({data, width, height}) => {
 
     const maxPointsPerUnit = 3000
 
-    const pixelPanels = useMemo(() => (data.plots.sort((p1, p2) => (idToNum(p1.unitId) - idToNum(p2.unitId))).map(plot => {
+    const pixelPanels = useMemo(() => (data.plots.sort((p1, p2) => (-idToNum(p1.unitId) + idToNum(p2.unitId))).map(plot => {
         const filteredSpikes = plot.spikeTimesSec.filter(t => (visibleStartTimeSec !== undefined) && (visibleStartTimeSec <= t) && (visibleEndTimeSec !== undefined) && (t <= visibleEndTimeSec))
         const pixelSpikes = subsampleIfNeeded(convert1dDataSeries(filteredSpikes, timeToPixelMatrix), maxPointsPerUnit)
 

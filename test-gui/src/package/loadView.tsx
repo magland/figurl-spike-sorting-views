@@ -10,6 +10,7 @@ import { isRasterPlotViewData, RasterPlotView } from "./view-raster-plot"
 import { isSortingCuration2ViewData, SortingCuration2View } from "./view-sorting-curation-2"
 import { isSpikeAmplitudesViewData, SpikeAmplitudesView } from "./view-spike-amplitudes"
 import { isSpikeLocationsViewData, SpikeLocationsView } from "./view-spike-locations"
+import { isUnitImagesViewData, UnitImagesView } from "./view-unit-images"
 import { isUnitLocationsViewData, UnitLocationsView } from "./view-unit-locations"
 import { isUnitMetricsGraphViewData, UnitMetricsGraphView } from "./view-unit-metrics-graph"
 import { isUnitSimilarityMatrixViewData, UnitSimilarityMatrixView } from "./view-unit-similarity-matrix"
@@ -58,6 +59,9 @@ const loadView = (o: {data: any, width: number, height: number, opts: any, ViewC
     }
     else if (isUnitsTableViewData(data)) {
         return <UnitsTableView data={data} width={width} height={height} />
+    }
+    else if (isUnitImagesViewData(data)) {
+        return <UnitImagesView data={data} width={width} height={height} />
     }
     else return undefined
 }
