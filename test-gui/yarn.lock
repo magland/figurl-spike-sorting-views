@@ -1256,6 +1256,19 @@
     path "npm:path-browserify"
     stream "npm:stream-browserify"
 
+"@figurl/interface@^0.1.20":
+  version "0.1.20"
+  resolved "https://registry.yarnpkg.com/@figurl/interface/-/interface-0.1.20.tgz#66e2db30bcc407947b6bd2e754a4fa84770894a7"
+  integrity sha512-b87Cktj6f320lrcpdlI9n5ATYYnU3XOEBFEF7OqoXw4JzHlnyP+5aOEToFGVUWxZbz2hkoUrUaqaVG7A6Nd1Vg==
+  dependencies:
+    "@figurl/core-utils" "^0.1"
+    "@types/node" "^18.7.18"
+    assert "npm:assert-browserify"
+    buffer "npm:buffer-browserify"
+    crypto "npm:crypto-browserify"
+    path "npm:path-browserify"
+    stream "npm:stream-browserify"
+
 "@figurl/timeseries-views@^0.2":
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/@figurl/timeseries-views/-/timeseries-views-0.2.7.tgz#b845a5cf4b69489051be382c9cf46bd5e224b368"
