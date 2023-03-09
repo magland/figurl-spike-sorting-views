@@ -6,9 +6,9 @@ export const selectUnique = (s: UnitSelection, a: UnitSelectionAction): UnitSele
     if (targetUnit === undefined) {
         throw Error(`UNIQUE_SELECT for unit selection requires a target unit to be set.`)
     }
-    if (!s.orderedUnitIds.includes(targetUnit)) {
-        throw Error(`Requested unit ID ${targetUnit} is not present in the ordered unit set.`)
-    }
+    // if (!s.orderedUnitIds.includes(targetUnit)) {
+    //     throw Error(`Requested unit ID ${targetUnit} is not present in the ordered unit set.`)
+    // }
     return {
         ...s,
         lastClickedId: targetUnit,

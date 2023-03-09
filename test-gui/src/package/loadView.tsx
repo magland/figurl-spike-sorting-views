@@ -6,7 +6,7 @@ import { ConfusionMatrixView, isConfusionMatrixViewData } from "./view-confusion
 import { CrossCorrelogramsView, isCrossCorrelogramsViewData } from "./view-cross-correlograms"
 import { ElectrodeGeometryView, isElectrodeGeometryViewData } from "./view-electrode-geometry"
 import { isLiveCrossCorrelogramsViewData, LiveCrossCorrelogramsView } from "./view-live-cross-correlograms"
-import { isRasterPlotViewData, RasterPlotView } from "./view-raster-plot"
+import { isRasterPlotView2Data, RasterPlotView2 } from "./view-raster-plot-2"
 import { isSortingCuration2ViewData, SortingCuration2View } from "./view-sorting-curation-2"
 import { isSpikeAmplitudesViewData, SpikeAmplitudesView } from "./view-spike-amplitudes"
 import { isSpikeLocationsViewData, SpikeLocationsView } from "./view-spike-locations"
@@ -36,8 +36,8 @@ const loadView = (o: {data: any, width: number, height: number, opts: any, ViewC
     else if (isLiveCrossCorrelogramsViewData(data)) {
         return <LiveCrossCorrelogramsView data={data} width={width} height={height} />
     }
-    else if (isRasterPlotViewData(data)) {
-        return <RasterPlotView data={data} width={width} height={height} />
+    else if (isRasterPlotView2Data(data)) {
+        return <RasterPlotView2 data={data} width={width} height={height} />
     }
     else if (isSortingCuration2ViewData(data)) {
         return <SortingCuration2View data={data} width={width} height={height} />

@@ -60,9 +60,9 @@
     stream "npm:stream-browserify"
 
 "@figurl/timeseries-views@^0.2":
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/@figurl/timeseries-views/-/timeseries-views-0.2.8.tgz#46a11742fa1f2379361457a84284cce6d148b084"
-  integrity sha512-WcyHJwjwNdrDX3+U6M1MKx0F8UpVw6ftIYK8rUtuYfa80UPOqxTeI4qJkS51KbJPq+J4sqKuH36TM3K1y+vh4A==
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/@figurl/timeseries-views/-/timeseries-views-0.2.9.tgz#d649f1f17e50ee30c2a8384cfbf29fbf2bfd340a"
+  integrity sha512-3EKPKNuhlWMbAW9bhPMtO2l95jB9AQXKg4tgTEQmmqP0eUTrKKn+ewG8lDECwIte7sFb/LTX0eEGtcLBbMV8UQ==
   dependencies:
     "@figurl/core-views" "^0.1"
     "@figurl/interface" "^0.1"
