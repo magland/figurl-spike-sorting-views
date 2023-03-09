@@ -107,7 +107,7 @@ const paintPanel = (context: CanvasRenderingContext2D, pixelPlots: PixelPlot[]) 
     for (const pass of [1, 2]) {
         pixelPlots.forEach(pPlot => {
             if (((pass === 1) && (pixelsPerUnit >= 10)) || (pPlot.hovered || pPlot.selected)) {
-                context.fillStyle = pass === 1 ? pPlot.color : 'black'
+                context.fillStyle = pass === 1 ? pPlot.color : pPlot.selected ? 'black' : pPlot.color
                 context.textAlign = 'right'
                 context.textBaseline = 'middle'
                 context.font = `${pass === 2 ? 'bold ' : ''}12px Arial`

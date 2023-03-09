@@ -124,7 +124,7 @@ const RasterPlotView2: FunctionComponent<Props> = ({data, width, height}) => {
     }, [pixelToUnitId])
 
     const handleMouseOut = useCallback((e: React.MouseEvent) => {
-        
+        setHoveredUnitId(undefined)
     }, [])
 
     if (visibleStartTimeSec === undefined) {
