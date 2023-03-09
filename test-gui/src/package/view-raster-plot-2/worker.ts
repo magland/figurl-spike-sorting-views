@@ -103,15 +103,24 @@ const paintPanel = (context: CanvasRenderingContext2D, pixelPlots: PixelPlot[]) 
 
     const pixelsPerUnit = canvasHeight / pixelPlots.length
 
+    console.log('--- margins', margins)
+
     // do this before clipping
-    for (const pass of [1, 2]) {
+    for (const pass of [1, 2, 3]) {
         pixelPlots.forEach(pPlot => {
-            if (((pass === 1) && (pixelsPerUnit >= 10)) || (pPlot.hovered || pPlot.selected)) {
-                context.fillStyle = pass === 1 ? pPlot.color : pPlot.selected ? 'black' : pPlot.color
+            if (((pass === 1) && (pixelsPerUnit >= 10)) || ((pass === 2) && (pPlot.selected)) || ((pass === 3) && (pPlot.hovered))) {
+                context.fillStyle = pass === 1 ? pPlot.color : pass === 2 ? 'black' : pPlot.color
                 context.textAlign = 'right'
                 context.textBaseline = 'middle'
-                context.font = `${pass === 2 ? 'bold ' : ''}12px Arial`
+                context.font = `${pass > 1 ? 'bold ' : ''}12px Arial`
                 context.fillText(pPlot.unitId + '', margins.left - 4, pPlot.y)
+
+                if ((pass === 3) || ((pass === 2) && pPlot.hovered)) {
+                    context.textAlign = 'left'
+                    context.textBaseline = 'middle'
+                    context.font = `${pass > 1 ? 'bold ' : ''}12px Arial`
+                    context.fillText(pPlot.unitId + '', canvasWidth - margins.right + 4, pPlot.y)
+                }
             }
         })
     }
@@ -121,31 +130,33 @@ const paintPanel = (context: CanvasRenderingContext2D, pixelPlots: PixelPlot[]) 
     context.rect(margins.left, margins.top, canvasWidth - margins.left - margins.right, canvasHeight - margins.top - margins.bottom)
     context.clip()
 
-    pixelPlots.forEach(pPlot => {
-        if (pPlot.hovered) {
-            context.strokeStyle = 'yellow'
-            context.lineWidth = 3
-            context.beginPath()
-            context.moveTo(0, pPlot.y)
-            context.lineTo(canvasWidth, pPlot.y)
-            context.stroke()
+    for (const pass of [1, 2]) {
+        pixelPlots.forEach(pPlot => {
+            if ((pass === 2) && (pPlot.hovered)) {
+                context.strokeStyle = 'yellow'
+                context.lineWidth = 3
+                context.beginPath()
+                context.moveTo(0, pPlot.y)
+                context.lineTo(canvasWidth, pPlot.y)
+                context.stroke()
 
-            context.strokeStyle = 'gray'
-            context.lineWidth = 1
-            context.beginPath()
-            context.moveTo(0, pPlot.y)
-            context.lineTo(canvasWidth, pPlot.y)
-            context.stroke()
-        }
-        if (pPlot.selected) {
-            context.strokeStyle = 'lightblue'
-            context.lineWidth = 3
-            context.beginPath()
-            context.moveTo(0, pPlot.y)
-            context.lineTo(canvasWidth, pPlot.y)
-            context.stroke()
-        }
-    })
+                context.strokeStyle = 'gray'
+                context.lineWidth = 1
+                context.beginPath()
+                context.moveTo(0, pPlot.y)
+                context.lineTo(canvasWidth, pPlot.y)
+                context.stroke()
+            }
+            if ((pass === 1) && (pPlot.selected)) {
+                context.strokeStyle = 'lightblue'
+                context.lineWidth = 3
+                context.beginPath()
+                context.moveTo(0, pPlot.y)
+                context.lineTo(canvasWidth, pPlot.y)
+                context.stroke()
+            }
+        })
+    }
 
     pixelPlots.forEach(pPlot => {
         context.strokeStyle = pPlot.color
