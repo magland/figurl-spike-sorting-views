@@ -256,7 +256,7 @@ const UnitLocationsWidget = (props: WidgetProps) => {
         />
     }, [width, height, paintDragSelectLayer])
 
-    return (
+    return (width > 0) && (height > 0) ? (
         <div
             style={{width, height, position: 'relative'}}
             onMouseMove={onMouseMove}
@@ -268,7 +268,7 @@ const UnitLocationsWidget = (props: WidgetProps) => {
             {unitsCanvas}
             {dragSelectCanvas}
         </div>
-    )
+    ) : <div />
 }
 
 const rectangularRegion = (r: Vec4): RectangularRegion => {
