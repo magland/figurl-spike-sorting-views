@@ -103,8 +103,6 @@ const paintPanel = (context: CanvasRenderingContext2D, pixelPlots: PixelPlot[]) 
 
     const pixelsPerUnit = canvasHeight / pixelPlots.length
 
-    console.log('--- margins', margins)
-
     // do this before clipping
     for (const pass of [1, 2, 3]) {
         pixelPlots.forEach(pPlot => {

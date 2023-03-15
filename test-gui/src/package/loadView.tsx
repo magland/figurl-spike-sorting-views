@@ -5,8 +5,8 @@ import { AverageWaveformsView, isAverageWaveformsViewData } from "./view-average
 import { ConfusionMatrixView, isConfusionMatrixViewData } from "./view-confusion-matrix"
 import { CrossCorrelogramsView, isCrossCorrelogramsViewData } from "./view-cross-correlograms"
 import { ElectrodeGeometryView, isElectrodeGeometryViewData } from "./view-electrode-geometry"
-import { isLiveCrossCorrelogramsViewData, LiveCrossCorrelogramsView } from "./view-live-cross-correlograms"
 import { isRasterPlotView2Data, RasterPlotView2 } from "./view-raster-plot-2"
+import { isEphysTracesViewData, EphysTracesView } from "./view-ephys-traces"
 import { isSortingCuration2ViewData, SortingCuration2View } from "./view-sorting-curation-2"
 import { isSpikeAmplitudesViewData, SpikeAmplitudesView } from "./view-spike-amplitudes"
 import { isSpikeLocationsViewData, SpikeLocationsView } from "./view-spike-locations"
@@ -32,9 +32,6 @@ const loadView = (o: {data: any, width: number, height: number, opts: any, ViewC
     }
     else if (isElectrodeGeometryViewData(data)) {
         return <ElectrodeGeometryView data={data} width={width} height={height} />
-    }
-    else if (isLiveCrossCorrelogramsViewData(data)) {
-        return <LiveCrossCorrelogramsView data={data} width={width} height={height} />
     }
     else if (isRasterPlotView2Data(data)) {
         return <RasterPlotView2 data={data} width={width} height={height} />
@@ -62,6 +59,9 @@ const loadView = (o: {data: any, width: number, height: number, opts: any, ViewC
     }
     else if (isUnitImagesViewData(data)) {
         return <UnitImagesView data={data} width={width} height={height} />
+    }
+    else if (isEphysTracesViewData(data)) {
+        return <EphysTracesView data={data} width={width} height={height} />
     }
     else return undefined
 }
