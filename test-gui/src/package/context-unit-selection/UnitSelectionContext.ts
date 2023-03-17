@@ -1,5 +1,6 @@
 import React, { useContext, useMemo } from "react"
 import { redistributeUnitColors } from "../view-units-table/unitColors"
+import { sortIds } from "./sortIds"
 import { getCheckboxClickHandlerGenerator, getPlotClickHandlerGenerator, selectUnique, selectUniqueFirst, selectUniqueLast, selectUniqueNext, selectUniquePrevious, setSelectionExplicit, toggleSelectAll, toggleSelectedRange, toggleSelectedUnit } from "./UnitSelectionFunctions"
 import { resetUnitOrder, updateSort } from "./UnitSelectionSortingFunctions"
 import { SortingCallback, SortingRule } from "./UnitSelectionTypes"
@@ -74,12 +75,13 @@ export const unitSelectionReducer = (s: UnitSelection, a: UnitSelectionAction): 
     const { type } = a
     switch (type) { 
         case INITIALIZE_UNITS:
-            if (s.orderedUnitIds.length > 0) return s
+            // jfm change on 3/17/23 - use the union of a.newUnitOrder and s.orderedUnitIds
+            // if (s.orderedUnitIds.length > 0) return s
             if (a.newUnitOrder && a.newUnitOrder.length >= 1) {
                 return {
                     ...s,
                     // selectedUnitIds: new Set<number | string>(), // don't initialze here, to support case of selection initialized via state
-                    orderedUnitIds: a.newUnitOrder
+                    orderedUnitIds: sortIds([...new Set([...a.newUnitOrder, ...s.orderedUnitIds])])
                 }
             }
             throw Error('Attempt to initialize table ordering with no actual units passed.')
