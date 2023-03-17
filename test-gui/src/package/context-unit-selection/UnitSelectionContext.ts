@@ -77,6 +77,8 @@ export const unitSelectionReducer = (s: UnitSelection, a: UnitSelectionAction): 
         case INITIALIZE_UNITS:
             // jfm change on 3/17/23 - use the union of a.newUnitOrder and s.orderedUnitIds
             // if (s.orderedUnitIds.length > 0) return s
+            const orderedUnitIdsSet = new Set(s.orderedUnitIds)
+            if ((a.newUnitOrder || []).filter(x => orderedUnitIdsSet.has(x)).length === 0) return s // don't change the reference
             if (a.newUnitOrder && a.newUnitOrder.length >= 1) {
                 return {
                     ...s,
